@@ -1,6 +1,6 @@
 {
 	"name": "og-react-swipe",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Swipe actions, Tinder style.",
 	"url": "https://github.com/occasiongenius/og-react-swipe",
 	"main": "build/index.js",
@@ -24,6 +24,7 @@
 	"author": {
 		"name": "OccasionGenius"
 	},
+	"repository": "github:occasiongenius/og-react-swipe",
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.0",
