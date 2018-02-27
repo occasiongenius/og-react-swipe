@@ -8,7 +8,8 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * style (obj): provide custom in-line styling for the CardStack
  * diff (int): the number of pixels from the middle that Cards should be dragged before callbacks are fired
  * onRunOut (func): function executed when there are no more cards in the stack
- * onTop (func): function executed when a card is dragged above the stack onRight (func): function executed when a card is dragged to the right of the stack
+ * onTop (func): function executed when a card is dragged above the stack 
+ * onRight (func): function executed when a card is dragged to the right of the stack
  * onBottom (func): function executed when a card is dragged below the stack
  * onLeft (func): function executed when a card is dragged to the left of the stack
 
