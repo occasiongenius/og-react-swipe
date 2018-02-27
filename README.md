@@ -3,21 +3,21 @@ A simple, light weight, tinder-like swiping framework for react apps.
 
 og-react-swipe provides 2 ReactJS components that need to be used in conjunction to provide swiping funcitonality.
 
-	- CardStack - A wrapper for all of your card to be swiped through. Accepted props:
-		- className (str): provide a custom className for the CardStack
-		- style (obj): provide custom in-line styling for the CardStack
-		- diff (int): the number of pixels from the middle that Cards should be dragged before callbacks are fired
-		- onRunOut (func): function executed when there are no more cards in the stack
-		- onTop (func): function executed when a card is dragged above the stack
-		-	onRight (func): function executed when a card is dragged to the right of the stack
-		- onBottom (func): function executed when a card is dragged below the stack
-		- onLeft (func): function executed when a card is dragged to the left of the stack
+	* CardStack - A wrapper for all of your card to be swiped through. Accepted props:
+		* className (str): provide a custom className for the CardStack
+		* style (obj): provide custom in-line styling for the CardStack
+		* diff (int): the number of pixels from the middle that Cards should be dragged before callbacks are fired
+		* onRunOut (func): function executed when there are no more cards in the stack
+		* onTop (func): function executed when a card is dragged above the stack
+			onRight (func): function executed when a card is dragged to the right of the stack
+		* onBottom (func): function executed when a card is dragged below the stack
+		* onLeft (func): function executed when a card is dragged to the left of the stack
 
-	- Card
-		- className (str): provide a custom className for the Card (not held)
-		- grabbedClassName (str): provide a custom className for the Card (when held)
-		- children (obj, arr): the children to be rendered inside the Card
-		- data (obj): data to be sent to on[Direction] callback functions on the CardStack
+	* Card
+		* className (str): provide a custom className for the Card (not held)
+		* grabbedClassName (str): provide a custom className for the Card (when held)
+		* children (obj, arr): the children to be rendered inside the Card
+		* data (obj): data to be sent to on[Direction] callback functions on the CardStack
 
 The on[Direction] callback functions on the CardStack will receive a parameter of the data object on each Card, and a second parameter that is the number of pixels the card was dragged from its middle
 
