@@ -2,6 +2,7 @@
 	"name": "og-react-swipe",
 	"version": "0.0.1",
 	"description": "Swipe actions, Tinder style.",
+	"url": "https://github.com/occasiongenius/og-react-swipe",
 	"main": "build/index.js",
 	"peerDependencies": {
 		"react": "^16.2.0"
@@ -21,8 +22,7 @@
 		"build": "webpack"
 	},
 	"author": {
-		"name": "OccasionGenius",
-		"website": "https://occasiongenius.com"
+		"name": "OccasionGenius"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
