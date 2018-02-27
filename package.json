@@ -21,8 +21,8 @@
 		"build": "webpack"
 	},
 	"author": {
-		"name": "Elijah Wilkes",
-		"email": ""
+		"name": "OccasionGenius",
+		"website": "https://occasiongenius.com"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
