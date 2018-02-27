@@ -39,13 +39,9 @@ class Card extends Component {
 	}
 
 	render() {
-		let card_props = {
-			className: 'og-card',
-		};
-
-		if (this.state.grabbed) {
-			card_props.className = 'hidden';
-		}
+		let card_props = { className: 'og-card' };
+		if (this.props.className) card_props.className += ' ' + this.props.className;
+		if (this.state.grabbed) card_props.className += ' og-hidden';
 
 		let grabbed_props = {
 			className: 'og-card-grabbed',
@@ -54,15 +50,14 @@ class Card extends Component {
 				width: this.state.width,
 			},
 		};
+		if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
+		if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
 
-		if (!this.state.grabbed) grabbed_props.className += ' hidden';
-
-		let container_className = 'og-card-container';
-
-		if (!this.props.visible) container_className += ' hidden';
+		let containerClassName = 'og-card-container';
+		if (!this.props.visible) containerClassName += ' og-hidden';
 
 		return (
-			<div className={ container_className }>
+			<div className={ containerClassName }>
 				<div { ...card_props } ref={(n) => { this.placeholder = n; }}>
 					{ this.props.children }
 				</div>
@@ -186,16 +181,16 @@ class Card extends Component {
 
 		switch (direction) {
 			case 'top':
-				this.props.onTop(amount);
+				this.props.onTop(this.props.data, amount);
 				break;
 			case 'right':
-				this.props.onRight(amount);
+				this.props.onRight(this.props.data, amount);
 				break;
 			case 'bottom':
-				this.props.onBottom(amount);
+				this.props.onBottom(this.props.data, amount);
 				break;
 			case 'left':
-				this.props.onLeft(amount);
+				this.props.onLeft(this.props.data, amount);
 				break;
 			default:
 				this.props.revert();

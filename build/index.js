@@ -1053,29 +1053,29 @@ var CardStack = function (_Component) {
 		}
 	}, {
 		key: 'onTop',
-		value: function onTop(amount) {
-			this.props.onTop(amount);
+		value: function onTop(data, amount) {
+			this.props.onTop(data, amount);
 
 			this.incrementView();
 		}
 	}, {
 		key: 'onRight',
-		value: function onRight(amount) {
-			this.props.onRight(amount);
+		value: function onRight(data, amount) {
+			this.props.onRight(data, amount);
 
 			this.incrementView();
 		}
 	}, {
 		key: 'onBottom',
-		value: function onBottom(amount) {
-			this.props.onBottom(amount);
+		value: function onBottom(data, amount) {
+			this.props.onBottom(data, amount);
 
 			this.incrementView();
 		}
 	}, {
 		key: 'onLeft',
-		value: function onLeft(amount) {
-			this.props.onLeft(amount);
+		value: function onLeft(data, amount) {
+			this.props.onLeft(data, amount);
 
 			this.incrementView();
 		}
@@ -17181,13 +17181,9 @@ var Card = function (_Component) {
 		value: function render() {
 			var _this2 = this;
 
-			var card_props = {
-				className: 'og-card'
-			};
-
-			if (this.state.grabbed) {
-				card_props.className = 'hidden';
-			}
+			var card_props = { className: 'og-card' };
+			if (this.props.className) card_props.className += ' ' + this.props.className;
+			if (this.state.grabbed) card_props.className += ' og-hidden';
 
 			var grabbed_props = {
 				className: 'og-card-grabbed',
@@ -17196,16 +17192,15 @@ var Card = function (_Component) {
 					width: this.state.width
 				}
 			};
+			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
+			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
 
-			if (!this.state.grabbed) grabbed_props.className += ' hidden';
-
-			var container_className = 'og-card-container';
-
-			if (!this.props.visible) container_className += ' hidden';
+			var containerClassName = 'og-card-container';
+			if (!this.props.visible) containerClassName += ' og-hidden';
 
 			return _react2.default.createElement(
 				'div',
-				{ className: container_className },
+				{ className: containerClassName },
 				_react2.default.createElement(
 					'div',
 					_extends({}, card_props, { ref: function ref(n) {
@@ -17344,16 +17339,16 @@ var Card = function (_Component) {
 
 			switch (direction) {
 				case 'top':
-					this.props.onTop(amount);
+					this.props.onTop(this.props.data, amount);
 					break;
 				case 'right':
-					this.props.onRight(amount);
+					this.props.onRight(this.props.data, amount);
 					break;
 				case 'bottom':
-					this.props.onBottom(amount);
+					this.props.onBottom(this.props.data, amount);
 					break;
 				case 'left':
-					this.props.onLeft(amount);
+					this.props.onLeft(this.props.data, amount);
 					break;
 				default:
 					this.props.revert();

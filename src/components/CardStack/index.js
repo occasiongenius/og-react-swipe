@@ -99,26 +99,26 @@ class CardStack extends Component {
 		);
 	}
 
-	onTop(amount) {
-		this.props.onTop(amount);
+	onTop(data, amount) {
+		this.props.onTop(data, amount);
 
 		this.incrementView();
 	}
 
-	onRight(amount) {
-		this.props.onRight(amount);
+	onRight(data,amount) {
+		this.props.onRight(data, amount);
 
 		this.incrementView();
 	}
 
-	onBottom(amount) {
-		this.props.onBottom(amount);
+	onBottom(data, amount) {
+		this.props.onBottom(data, amount);
 
 		this.incrementView();
 	}
 
-	onLeft(amount) {
-		this.props.onLeft(amount);
+	onLeft(data, amount) {
+		this.props.onLeft(data, amount);
 
 		this.incrementView();
 	}
