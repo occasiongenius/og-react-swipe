@@ -6,8 +6,13 @@
 	"peerDependencies": {
 		"react": "^16.2.0"
 	},
+	"files": [
+		"build/index.js",
+		"build/index.css"
+	],
 	"dependencies": {
 		"react": "^16.2.0",
+		"react-dom": "^16.2.0",
 		"webpack": "^3.11.0"
 	},
 	"scripts": {
