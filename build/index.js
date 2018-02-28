@@ -17172,8 +17172,8 @@ var Card = function (_Component) {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			if (typeof document !== 'undefined') {
-				this.state.elem.removeEventListener('touchstart', this.grabTouch);
-				this.state.elem.removeEventListener('mousedown', this.grab);
+				this.state.element.removeEventListener('touchstart', this.grabTouch);
+				this.state.element.removeEventListener('mousedown', this.grab);
 			}
 		}
 	}, {
@@ -17358,24 +17358,26 @@ var Card = function (_Component) {
 	}, {
 		key: 'setStateSize',
 		value: function setStateSize() {
-			var rect = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
-
-			var start_top = rect.top;
-			var start_left = rect.left;
-
 			if (typeof document !== 'undefined') {
+				var rect = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
+
+				var new_state = {
+					start_top: rect.top,
+					start_left: rect.left,
+					width: this.placeholder.clientWidth,
+					height: this.placeholder.clientHeight
+				};
+
 				var elem = _reactDom2.default.findDOMNode(this);
 
-				elem.addEventListener('touchstart', this.grabTouch);
-				elem.addEventListener('mousedown', this.grab);
+				if (!this.props.undraggable) {
+					elem.addEventListener('touchstart', this.grabTouch);
+					elem.addEventListener('mousedown', this.grab);
+				}
 
-				this.setState({
-					element: elem,
-					width: this.placeholder.clientWidth,
-					height: this.placeholder.clientHeight,
-					start_top: start_top,
-					start_left: start_left
-				});
+				new_state.element = elem;
+
+				this.setState(new_state);
 			}
 		}
 	}]);

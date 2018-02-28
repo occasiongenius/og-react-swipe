@@ -33,8 +33,8 @@ class Card extends Component {
 
 	componentWillUnmount() {
 		if (typeof document !== 'undefined') {
-			this.state.elem.removeEventListener('touchstart', this.grabTouch);
-			this.state.elem.removeEventListener('mousedown', this.grab);
+			this.state.element.removeEventListener('touchstart', this.grabTouch);
+			this.state.element.removeEventListener('mousedown', this.grab);
 		}
 	}
 
@@ -199,25 +199,27 @@ class Card extends Component {
 	}
 
 	setStateSize() {
-		let rect = ReactDOM.findDOMNode(this)
-			.getBoundingClientRect();
-
-		let start_top = rect.top;
-		let start_left = rect.left;
-
 		if (typeof document !== 'undefined') {
-			let elem = ReactDOM.findDOMNode(this);
+			let rect = ReactDOM.findDOMNode(this)
+				.getBoundingClientRect();
 
-			elem.addEventListener('touchstart', this.grabTouch);
-			elem.addEventListener('mousedown', this.grab);
-
-			this.setState({ 
-				element: elem,
+			let new_state = {
+				start_top: rect.top,
+				start_left: rect.left,
 				width: this.placeholder.clientWidth,
 				height: this.placeholder.clientHeight,
-				start_top,
-				start_left,
-			});
+			};
+
+			let elem = ReactDOM.findDOMNode(this);
+
+			if (!this.props.undraggable) {
+				elem.addEventListener('touchstart', this.grabTouch);
+				elem.addEventListener('mousedown', this.grab);
+			}
+
+			new_state.element = elem;
+
+			this.setState(new_state);
 		}
 	}
 }
