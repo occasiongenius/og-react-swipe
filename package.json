@@ -9,7 +9,7 @@
 	},
 	"files": [
 		"build/index.js",
-		"build/index.css"
+		"build/style.css"
 	],
 	"dependencies": {
 		"react": "^16.2.0",
