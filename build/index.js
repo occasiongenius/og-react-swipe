@@ -1025,15 +1025,22 @@ var CardStack = function (_Component) {
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
 
-			var children = void 0;
+			var children = null;
 
 			if (this.props.children && Array.isArray(this.props.children)) {
+				console.log('MULTIPLE CHILDREN');
+				console.log(this.props.children);
+
 				children = this.props.children.map(function (child, i) {
+					var nested_child = null;
+
+					if (child.props && child.props.children) nested_child = child.props.children;
+
 					var child_props = _extends({}, child.props, default_child_props, {
 						visible: _this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i ? true : false
 					});
 
-					return _react2.default.cloneElement(child, child_props, child_props.children);
+					return _react2.default.cloneElement(child, child_props, nested_child);
 				});
 
 				if (children.length == 0) children = null;
@@ -1042,9 +1049,14 @@ var CardStack = function (_Component) {
 					visible: this.state.currently_viewed == 0 ? true : false
 				});
 
-				children = _react2.default.cloneElement(this.props.children, child_props, this.props.children.props.children);
+				var nested_child = null;
 
-				if (!children.type) children = null;
+				console.log('SINGLE CHILD');
+				console.log(this.props.children);
+
+				if (this.props.children.props && this.props.children.props.children) nested_child = this.props.children.props.children;
+
+				children = _react2.default.cloneElement(this.props.children, child_props, nested_child);
 			}
 
 			var style = _extends({}, this.props.style);
