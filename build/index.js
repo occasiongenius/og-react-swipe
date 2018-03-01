@@ -1033,7 +1033,7 @@ var CardStack = function (_Component) {
 						visible: _this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i ? true : false
 					});
 
-					return _react2.default.cloneElement(child, child_props, child.props.children);
+					return _react2.default.cloneElement(child, child_props, child_props.children);
 				});
 			} else if (this.props.children) {
 				var child_props = _extends({}, this.props.children.props, default_child_props, {
