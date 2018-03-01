@@ -59,7 +59,7 @@ class CardStack extends Component {
 
 		if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
 
-		let children;
+		let children = null;
 			
 		if (this.props.children && Array.isArray(this.props.children)) {
 			console.log('MULTIPLE CHILDREN');
@@ -106,8 +106,6 @@ class CardStack extends Component {
 				child_props, 
 				nested_child
 			);
-
-			if (!children.type) children = null;
 		}
 
 		let style = { ...this.props.style };
