@@ -72,8 +72,6 @@ class CardStack extends Component {
 						? true : false,
 				};
 
-				console.log(child);
-
 				return React.cloneElement(child, child_props, child_props.children);
 			});
 		} else if (this.props.children) {
@@ -94,8 +92,10 @@ class CardStack extends Component {
 
 		let style = { ...this.props.style };
 
+		console.log(children);
+
 		return (
-			<div className={ className } style={ this.props.style }>
+			<div className={ className } style={ style }>
 				{ children }
 			</div>
 		);
