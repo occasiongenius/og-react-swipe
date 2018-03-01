@@ -13,11 +13,6 @@
 		"build/index.js",
 		"build/style.css"
 	],
-	"dependencies": {
-		"react": "^16.2.0",
-		"react-dom": "^16.2.0",
-		"webpack": "^3.11.0"
-	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "webpack --watch",
