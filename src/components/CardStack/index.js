@@ -72,6 +72,8 @@ class CardStack extends Component {
 						? true : false,
 				};
 
+				console.log(child);
+
 				return React.cloneElement(child, child_props, child_props.children);
 			});
 		} else if (this.props.children) {

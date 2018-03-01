@@ -11,6 +11,11 @@
 		"build/index.js",
 		"build/style.css"
 	],
+	"peerDependencies": {
+		"react": "^16.2.0",
+		"react-dom": "^16.2.0",
+		"webpack": "^3.11.0"
+	},
 	"dependencies": {
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",
