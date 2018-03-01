@@ -63,6 +63,14 @@ class CardStack extends Component {
 			
 		if (this.props.children && Array.isArray(this.props.children)) {
 			children = this.props.children.map((child, i) => {
+				let nested_child = null;
+
+				console.log('MULTIPLE CHILDREN');
+				console.log(this.props.children);
+
+				if (child.props && child.props.children) 
+					nested_child = child.props.children;
+
 				let child_props = { 
 					...child.props, 
 					...default_child_props,
@@ -72,7 +80,7 @@ class CardStack extends Component {
 						? true : false,
 				};
 
-				return React.cloneElement(child, child_props, child_props.children);
+				return React.cloneElement(child, child_props, nested_child;
 			});
 
 			if (children.length == 0) children = null;
@@ -85,10 +93,18 @@ class CardStack extends Component {
 					? true : false,
 			};
 
+			let nested_child = null;
+
+			console.log('SINGLE CHILD');
+			console.log(this.props.children);
+
+			if (this.props.children.props && this.props.children.props.children)
+				nested_child = this.props.children.props.children;
+
 			children = React.cloneElement(
 				this.props.children, 
 				child_props, 
-				this.props.children.props.children
+				nested_child
 			);
 
 			if (!children.type) children = null;
