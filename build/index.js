@@ -1033,23 +1033,25 @@ var CardStack = function (_Component) {
 						visible: _this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i ? true : false
 					});
 
-					console.log(child);
-
 					return _react2.default.cloneElement(child, child_props, child_props.children);
 				});
+
+				if (children.length == 0) children = null;
 			} else if (this.props.children) {
 				var child_props = _extends({}, this.props.children.props, default_child_props, {
 					visible: this.state.currently_viewed == 0 ? true : false
 				});
 
 				children = _react2.default.cloneElement(this.props.children, child_props, this.props.children.props.children);
+
+				if (!children.type) children = null;
 			}
 
 			var style = _extends({}, this.props.style);
 
 			return _react2.default.createElement(
 				'div',
-				{ className: className, style: this.props.style },
+				{ className: className, style: style },
 				children
 			);
 		}
