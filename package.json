@@ -1,6 +1,6 @@
 {
 	"name": "og-react-swipe",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "Swipe actions, Tinder style.",
 	"url": "https://github.com/occasiongenius/og-react-swipe",
 	"main": "build/index.js",
