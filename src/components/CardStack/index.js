@@ -62,9 +62,6 @@ class CardStack extends Component {
 		let children = null;
 			
 		if (this.props.children && Array.isArray(this.props.children)) {
-			console.log('MULTIPLE CHILDREN');
-			console.log(this.props.children);
-
 			children = this.props.children.map((child, i) => {
 				let nested_child = null;
 
@@ -94,9 +91,6 @@ class CardStack extends Component {
 			};
 
 			let nested_child = null;
-
-			console.log('SINGLE CHILD');
-			console.log(this.props.children);
 
 			if (this.props.children.props && this.props.children.props.children)
 				nested_child = this.props.children.props.children;
