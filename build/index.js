@@ -1029,15 +1029,21 @@ var CardStack = function (_Component) {
 
 			if (this.props.children && Array.isArray(this.props.children)) {
 				children = this.props.children.map(function (child, i) {
-					var nested_child = null;
+					if (_this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i) {
+						var nested_child = null;
 
-					if (child.props && child.props.children) nested_child = child.props.children;
+						if (child.props && child.props.children) nested_child = child.props.children;
 
-					var child_props = _extends({}, child.props, default_child_props, {
-						visible: _this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i ? true : false
-					});
+						var child_props = _extends({}, child.props, default_child_props, {
+							visible: _this2.state.currently_viewed - 1 !== i
+							/*visible: 
+       	this.state.currently_viewed == i 
+       	|| this.state.next_visible && this.state.currently_viewed + 1 == i
+       	? true : false,*/
+						});
 
-					return _react2.default.cloneElement(child, child_props, nested_child);
+						return _react2.default.cloneElement(child, child_props, nested_child);
+					}
 				});
 
 				if (children.length == 0) children = null;

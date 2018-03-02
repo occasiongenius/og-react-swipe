@@ -63,21 +63,25 @@ class CardStack extends Component {
 			
 		if (this.props.children && Array.isArray(this.props.children)) {
 			children = this.props.children.map((child, i) => {
-				let nested_child = null;
+				if (this.state.currently_viewed == i 
+					|| (this.state.next_visible && this.state.currently_viewed + 1 == i)) {
+					let nested_child = null;
 
-				if (child.props && child.props.children) 
-					nested_child = child.props.children;
+					if (child.props && child.props.children) 
+						nested_child = child.props.children;
 
-				let child_props = { 
-					...child.props, 
-					...default_child_props,
-					visible: 
-						this.state.currently_viewed == i 
-						|| this.state.next_visible && this.state.currently_viewed + 1 == i
-						? true : false,
-				};
+					let child_props = { 
+						...child.props, 
+						...default_child_props,
+						visible: this.state.currently_viewed - 1 !== i,
+						/*visible: 
+							this.state.currently_viewed == i 
+							|| this.state.next_visible && this.state.currently_viewed + 1 == i
+							? true : false,*/
+					};
 
-				return React.cloneElement(child, child_props, nested_child);
+					return React.cloneElement(child, child_props, nested_child);
+				}
 			});
 
 			if (children.length == 0) children = null;
