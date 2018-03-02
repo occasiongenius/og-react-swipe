@@ -1028,9 +1028,6 @@ var CardStack = function (_Component) {
 			var children = null;
 
 			if (this.props.children && Array.isArray(this.props.children)) {
-				console.log('MULTIPLE CHILDREN');
-				console.log(this.props.children);
-
 				children = this.props.children.map(function (child, i) {
 					var nested_child = null;
 
@@ -1050,9 +1047,6 @@ var CardStack = function (_Component) {
 				});
 
 				var nested_child = null;
-
-				console.log('SINGLE CHILD');
-				console.log(this.props.children);
 
 				if (this.props.children.props && this.props.children.props.children) nested_child = this.props.children.props.children;
 
@@ -17188,8 +17182,10 @@ var Card = function (_Component) {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			if (typeof document !== 'undefined') {
-				this.state.element.removeEventListener('touchstart', this.grabTouch);
-				this.state.element.removeEventListener('mousedown', this.grab);
+				if (this.state.element) {
+					this.state.element.removeEventListener('touchstart', this.grabTouch);
+					this.state.element.removeEventListener('mousedown', this.grab);
+				}
 			}
 		}
 	}, {
