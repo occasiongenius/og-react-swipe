@@ -33,8 +33,10 @@ class Card extends Component {
 
 	componentWillUnmount() {
 		if (typeof document !== 'undefined') {
-			this.state.element.removeEventListener('touchstart', this.grabTouch);
-			this.state.element.removeEventListener('mousedown', this.grab);
+			if (this.state.element) {
+				this.state.element.removeEventListener('touchstart', this.grabTouch);
+				this.state.element.removeEventListener('mousedown', this.grab);
+			}
 		}
 	}
 
