@@ -971,18 +971,23 @@ var CardStack = function (_Component) {
 		_this.onRight = _this.onRight.bind(_this);
 		_this.onBottom = _this.onBottom.bind(_this);
 		_this.onLeft = _this.onLeft.bind(_this);
+		_this.onClick = _this.onClick.bind(_this);
 		_this.revert = _this.revert.bind(_this);
 		_this.showNext = _this.showNext.bind(_this);
 
+		var diff = _this.props.diff ? _this.props.diff : 100;
+
 		_this.state = {
-			top_bound: undefined,
-			right_bound: undefined,
-			bottom_bound: undefined,
-			left_bound: undefined,
+			top_trigger: -diff,
+			right_trigger: diff,
+			bottom_trigger: diff,
+			left_trigger: -diff,
+			click_bound: _this.props.click_bound ? _this.props.click_bound : 5,
 			onTop: _this.props.onTop ? _this.onTop : undefined,
 			onRight: _this.props.onRight ? _this.onRight : undefined,
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
 			onLeft: _this.props.onLeft ? _this.onLeft : undefined,
+			onClick: _this.props.onClick ? _this.onClick : undefined,
 			currently_viewed: _this.props.start_index || 0
 		};
 
@@ -991,18 +996,6 @@ var CardStack = function (_Component) {
 	}
 
 	_createClass(CardStack, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var diff = this.props.diff || 100;
-
-			this.setState({
-				top_bound: -diff,
-				right_bound: diff,
-				bottom_bound: diff,
-				left_bound: -diff
-			});
-		}
-	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -1011,10 +1004,11 @@ var CardStack = function (_Component) {
 			if (this.props.className) className += ' ' + this.props.className;
 
 			var default_child_props = {
-				top_bound: this.state.top_bound,
-				right_bound: this.state.right_bound,
-				bottom_bound: this.state.bottom_bound,
-				left_bound: this.state.left_bound,
+				top_trigger: this.state.top_trigger,
+				right_trigger: this.state.right_trigger,
+				bottom_trigger: this.state.bottom_trigger,
+				left_trigger: this.state.left_trigger,
+				click_bound: this.state.click_bound,
 				onTop: this.state.onTop,
 				onRight: this.state.onRight,
 				onBottom: this.state.onBottom,
@@ -1036,10 +1030,6 @@ var CardStack = function (_Component) {
 
 						var child_props = _extends({}, child.props, default_child_props, {
 							visible: _this2.state.currently_viewed - 1 !== i
-							/*visible: 
-       	this.state.currently_viewed == i 
-       	|| this.state.next_visible && this.state.currently_viewed + 1 == i
-       	? true : false,*/
 						});
 
 						return _react2.default.cloneElement(child, child_props, nested_child);
@@ -1094,6 +1084,13 @@ var CardStack = function (_Component) {
 			this.props.onLeft(data, amount);
 
 			this.incrementView();
+		}
+	}, {
+		key: 'onClick',
+		value: function onClick(data) {
+			this.props.onClick(data);
+
+			this.setState({ next_visible: false });
 		}
 	}, {
 		key: 'revert',
@@ -17339,20 +17336,24 @@ var Card = function (_Component) {
 
 			var abs = Math.abs;
 
-			if (this.props.onRight && x > this.props.right_bound && x > amount) {
+			if (this.props.onRight && x > this.props.right_trigger && x > amount) {
 				direction = 'right';
 				amount = x;
-			} else if (this.props.onLeft && x < this.props.left_bound && abs(x) > amount) {
+			} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
 				direction = 'left';
 				amount = abs(x);
 			}
 
-			if (this.props.onBottom && y > this.props.bottom_bound && y > amount) {
+			if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
 				direction = 'bottom';
 				amount = y;
-			} else if (this.props.onTop && y < this.props.top_bound && abs(y) > amount) {
+			} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
 				direction = 'top';
 				amount = abs(y);
+			}
+
+			if (!direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
+				direction = 'click';
 			}
 
 			switch (direction) {
@@ -17367,6 +17368,9 @@ var Card = function (_Component) {
 					break;
 				case 'left':
 					this.props.onLeft(this.props.data, amount);
+					break;
+				case 'click':
+					this.props.onClick(this.props.data);
 					break;
 				default:
 					this.props.revert();
