@@ -165,20 +165,24 @@ class Card extends Component {
 
 		let abs = Math.abs;
 
-		if (this.props.onRight && x > this.props.right_bound && x > amount) {
+		if (this.props.onRight && x > this.props.right_trigger && x > amount) {
 			direction = 'right';
 			amount = x;
-		} else if (this.props.onLeft && x < this.props.left_bound && abs(x) > amount) {
+		} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
 			direction = 'left';
 			amount = abs(x);
 		}
 
-		if (this.props.onBottom && y > this.props.bottom_bound && y > amount) {
+		if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
 			direction = 'bottom'
 			amount = y;
-		} else if (this.props.onTop && y < this.props.top_bound && abs(y) > amount) {
+		} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
 			direction = 'top';
 			amount = abs(y);
+		}
+
+		if (!direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
+			direction = 'click';
 		}
 
 		switch (direction) {
@@ -193,6 +197,9 @@ class Card extends Component {
 				break;
 			case 'left':
 				this.props.onLeft(this.props.data, amount);
+				break;
+			case 'click':
+				this.props.onClick(this.props.data);
 				break;
 			default:
 				this.props.revert();

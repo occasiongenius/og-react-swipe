@@ -11,44 +11,39 @@ class CardStack extends Component {
 		this.onRight = this.onRight.bind(this);
 		this.onBottom = this.onBottom.bind(this);
 		this.onLeft = this.onLeft.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.revert = this.revert.bind(this);
 		this.showNext = this.showNext.bind(this);
 
+		let diff = this.props.diff ? this.props.diff : 100;
+
 		this.state = {
-			top_bound: undefined,
-			right_bound: undefined,
-			bottom_bound: undefined,
-			left_bound: undefined,
+			top_trigger: -diff,
+			right_trigger: diff,
+			bottom_trigger: diff,
+			left_trigger: -diff,
+			click_bound: this.props.click_bound ? this.props.click_bound : 5,
 			onTop: this.props.onTop ? this.onTop : undefined,
 			onRight: this.props.onRight ? this.onRight : undefined,
 			onBottom: this.props.onBottom ? this.onBottom : undefined,
 			onLeft: this.props.onLeft ? this.onLeft : undefined,
+			onClick: this.props.onClick ? this.onClick : undefined,
 			currently_viewed: this.props.start_index || 0,
 		};
 
 		this.refs = {};
 	}
 	
-	componentDidMount() {
-		let diff = this.props.diff || 100;
-
-		this.setState({
-			top_bound: -diff,
-			right_bound: diff,
-			bottom_bound: diff,
-			left_bound: -diff,
-		});
-	}
-
 	render() {
 		let className = 'og-card-stack';
 		if (this.props.className) className += ' ' + this.props.className;
 
 		let default_child_props = {
-			top_bound: this.state.top_bound,
-			right_bound: this.state.right_bound,
-			bottom_bound: this.state.bottom_bound,
-			left_bound: this.state.left_bound,
+			top_trigger: this.state.top_trigger,
+			right_trigger: this.state.right_trigger,
+			bottom_trigger: this.state.bottom_trigger,
+			left_trigger: this.state.left_trigger,
+			click_bound: this.state.click_bound,
 			onTop: this.state.onTop,
 			onRight: this.state.onRight,
 			onBottom: this.state.onBottom,
@@ -74,10 +69,6 @@ class CardStack extends Component {
 						...child.props, 
 						...default_child_props,
 						visible: this.state.currently_viewed - 1 !== i,
-						/*visible: 
-							this.state.currently_viewed == i 
-							|| this.state.next_visible && this.state.currently_viewed + 1 == i
-							? true : false,*/
 					};
 
 					return React.cloneElement(child, child_props, nested_child);
@@ -137,6 +128,12 @@ class CardStack extends Component {
 		this.props.onLeft(data, amount);
 
 		this.incrementView();
+	}
+
+	onClick(data) {
+		this.props.onClick(data);
+
+		this.setState({ next_visible: false });
 	}
 
 	revert() {
