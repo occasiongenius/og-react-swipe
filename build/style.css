@@ -1,3 +1,7 @@
+.og-card {
+	overflow: auto;
+}
+
 .og-card-stack {
 	position: relative;
 }
@@ -8,7 +12,6 @@
 
 .og-card-grabbed {
 	position: absolute;
-	box-shadow: rgba(1, 1, 1, .4) -5px 5px 8px;
 	z-index: 1000;
 }
 
