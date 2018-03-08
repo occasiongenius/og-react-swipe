@@ -71,7 +71,8 @@ class App extends Component {
 			]);
 
 			cards.push(
-				<Card key={ i } data={{ card_num: i }} undraggable={ i == 9 }>
+				<Card key={ i } data={{ card_num: i }} undraggable={ i == 9 }
+					animate={ animate } animateThrottle={ 20 }>
 					<div style={{
 						backgroundColor: color,
 						width: '100%',
@@ -87,7 +88,9 @@ class App extends Component {
 					diff={ 100 }
 					onRunOut={ this.onRunOut }
 					onLeft={ this.leftDrag }
-					onRight={ this.rightDrag }>
+					onRight={ this.rightDrag }
+					limit={ 120 }
+					bottomLimit={ 40 }>
 					{ cards }
 				</CardStack>
 			</div>
