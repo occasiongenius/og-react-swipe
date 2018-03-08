@@ -22,7 +22,7 @@ class Card extends Component {
 			left_diff: 0,
 			top_diff: 0,
 			animate: this.props.animate instanceof Map ? this.props.animate : undefined,
-			animate_throttle: this.props.animate_throttle ? this.props.animate_throttle : 50,
+			animate_throttle: this.props.animateThrottle ? this.props.animateThrottle : 50,
 		};
 
 		if (this.props.animate) {
@@ -47,9 +47,9 @@ class Card extends Component {
 
 	componentWillUnmount() {
 		if (typeof document !== 'undefined') {
-			if (this.state.element) {
-				this.state.element.removeEventListener('touchstart', this.grabTouch);
-				this.state.element.removeEventListener('mousedown', this.grab);
+			if (this.container) {
+				this.container.removeEventListener('touchstart', this.grabTouch);
+				this.container.removeEventListener('mousedown', this.grab);
 			}
 		}
 	}
@@ -74,11 +74,11 @@ class Card extends Component {
 		if (!this.props.visible) containerClassName += ' og-hidden';
 
 		return (
-			<div className={ containerClassName }>
-				<div { ...card_props } ref={(n) => { this.placeholder = n; }}>
+			<div className={ containerClassName } ref={n => { this.container = n; }}>
+				<div { ...card_props } ref={n => { this.placeholder = n; }}>
 					{ this.props.children }
 				</div>
-				<div { ...grabbed_props } ref={(n) => { this.grabbed = n; }}>
+				<div { ...grabbed_props } ref={n => { this.grabbed = n; }}>
 					{ this.props.children }
 				</div>
 			</div>
@@ -171,6 +171,16 @@ class Card extends Component {
 		let left_move = x - this.state.start_left - this.state.left_diff;
 		let top_move = y - this.state.start_top - this.state.top_diff;
 
+		if (this.props.bottom_limit && (top_move > this.props.bottom_limit - this.state.start_bottom))
+			top_move = this.props.bottom_limit - this.state.start_bottom;
+		else if (this.props.top_limit && (this.state.start_top + top_move < this.props.top_limit))
+			top_move = this.props.top_limit - this.state.start_top;
+
+		if (this.props.right_limit && (left_move > this.props.right_limit - this.state.start_right))
+			left_move = this.props.right_limit - this.state.start_right;
+		else if (this.props.left_limit && (this.state.start_left + left_move < this.props.left_limit))
+			left_move = this.props.left_limit - this.state.start_left;
+
 		this.grabbed.style.left = left_move + 'px';
 		this.grabbed.style.top = top_move + 'px';
 
@@ -193,7 +203,7 @@ class Card extends Component {
 		}
 
 		if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
-			direction = 'bottom'
+			direction = 'bottom';
 			amount = y;
 		} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
 			direction = 'top';
@@ -229,24 +239,23 @@ class Card extends Component {
 
 	setStateSize() {
 		if (typeof document !== 'undefined') {
-			let rect = ReactDOM.findDOMNode(this)
-				.getBoundingClientRect();
+			let rect = this.container.getBoundingClientRect();
 
 			let new_state = {
 				start_top: rect.top,
+				start_right: rect.right,
+				start_bottom: rect.bottom,
 				start_left: rect.left,
 				width: this.placeholder.clientWidth,
 				height: this.placeholder.clientHeight,
 			};
 
-			let elem = ReactDOM.findDOMNode(this);
+			let elem = this.container;
 
 			if (!this.props.undraggable) {
 				elem.addEventListener('touchstart', this.grabTouch);
 				elem.addEventListener('mousedown', this.grab);
 			}
-
-			new_state.element = elem;
 
 			this.setState(new_state);
 		}

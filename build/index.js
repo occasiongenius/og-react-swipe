@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -307,46 +307,57 @@ module.exports = emptyFunction;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
 
-function checkDCE() {
-  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
-  if (
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
-    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
-  ) {
-    return;
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    // This branch is unreachable because this function is only called
-    // in production, but the condition is true only in development.
-    // Therefore if the branch is still here, dead code elimination wasn't
-    // properly applied.
-    // Don't change the message. React DevTools relies on it. Also make sure
-    // this message doesn't occur elsewhere in this function, or it will cause
-    // a false positive.
-    throw new Error('^_^');
-  }
-  try {
-    // Verify that the code above has been dead code eliminated (DCE'd).
-    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
-  } catch (err) {
-    // DevTools shouldn't crash React, no matter what.
-    // We should still report in case we break this code.
-    console.error(err);
-  }
-}
 
-if (process.env.NODE_ENV === 'production') {
-  // DCE check should happen before ReactDOM bundle executes so that
-  // DevTools can report bad minification during injection.
-  checkDCE();
-  module.exports = __webpack_require__(17);
-} else {
-  module.exports = __webpack_require__(20);
-}
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+var throttle = exports.throttle = function throttle(func, wait, options) {
+	var context, args, result;
+	var timeout = null;
+	var previous = 0;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+	if (!options) options = {};
+
+	var later = function later() {
+		previous = options.leading === false ? 0 : Date.now();
+		timeout = null;
+		result = func.apply(context, args);
+		if (!timeout) context = args = null;
+	};
+
+	return function () {
+		var now = Date.now();
+
+		if (!previous && options.leading === false) previous = now;
+
+		var remaining = wait - (now - previous);
+		context = this;
+		args = arguments;
+
+		if (remaining <= 0 || remaining > wait) {
+
+			if (timeout) {
+				clearTimeout(timeout);
+				timeout = null;
+			}
+
+			previous = now;
+			result = func.apply(context, args);
+
+			if (!timeout) context = args = null;
+		} else if (!timeout && options.trailing !== false) {
+			timeout = setTimeout(later, remaining);
+		}
+
+		return result;
+	};
+};
 
 /***/ }),
 /* 4 */
@@ -694,7 +705,7 @@ module.exports = shallowEqual;
  * 
  */
 
-var isTextNode = __webpack_require__(18);
+var isTextNode = __webpack_require__(19);
 
 /*eslint-disable no-bitwise */
 
@@ -911,68 +922,11 @@ module.exports = warning;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-// Returns a function, that, when invoked, will only be triggered at most once
-// during a given window of time. Normally, the throttled function will run
-// as much as it can, without ever going more than once per `wait` duration;
-// but if you'd like to disable the execution on the leading edge, pass
-// `{leading: false}`. To disable execution on the trailing edge, ditto.
-var throttle = exports.throttle = function throttle(func, wait, options) {
-	var context, args, result;
-	var timeout = null;
-	var previous = 0;
-
-	if (!options) options = {};
-
-	var later = function later() {
-		previous = options.leading === false ? 0 : Date.now();
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
-
-	return function () {
-		var now = Date.now();
-
-		if (!previous && options.leading === false) previous = now;
-
-		var remaining = wait - (now - previous);
-		context = this;
-		args = arguments;
-
-		if (remaining <= 0 || remaining > wait) {
-
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
-			}
-
-			previous = now;
-			result = func.apply(context, args);
-
-			if (!timeout) context = args = null;
-		} else if (!timeout && options.trailing !== false) {
-			timeout = setTimeout(later, remaining);
-		}
-
-		return result;
-	};
-};
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _CardStack = __webpack_require__(16);
+var _CardStack = __webpack_require__(15);
 
 var _CardStack2 = _interopRequireDefault(_CardStack);
 
-var _Card = __webpack_require__(27);
+var _Card = __webpack_require__(16);
 
 var _Card2 = _interopRequireDefault(_Card);
 
@@ -984,7 +938,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1002,11 +956,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(3);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _utility = __webpack_require__(14);
+var _utility = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1053,6 +1003,23 @@ var CardStack = function (_Component) {
 	}
 
 	_createClass(CardStack, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			if (this.container && (this.props.limit || this.props.bottom_limit)) {
+
+				var rect = this.container.getBoundingClientRect();
+
+				var new_state = {
+					top_limit: this.props.top_limit ? rect.top - this.props.top_limit : this.props.limit ? rect.top - this.props.limit : undefined,
+					right_limit: this.props.right_limit ? rect.right + this.props.right_limit : this.props.limit ? rect.right + this.props.limit : undefined,
+					bottom_limit: this.props.bottom_limit ? rect.bottom + this.props.bottom_limit : this.props.limit ? rect.bottom + this.props.limit : undefined,
+					left_limit: this.props.left_limit ? rect.left - this.props.left_limit : this.props.limit ? rect.left - this.props.limit : undefined
+				};
+
+				this.setState(new_state);
+			}
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -1071,7 +1038,11 @@ var CardStack = function (_Component) {
 				onBottom: this.state.onBottom,
 				onLeft: this.state.onLeft,
 				revert: this.revert,
-				showNext: this.showNext
+				showNext: this.showNext,
+				top_limit: this.state.top_limit,
+				right_limit: this.state.right_limit,
+				bottom_limit: this.state.bottom_limit,
+				left_limit: this.state.left_limit
 			};
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
@@ -1110,7 +1081,9 @@ var CardStack = function (_Component) {
 
 			return _react2.default.createElement(
 				'div',
-				{ className: className, style: style },
+				{ className: className, style: style, ref: function ref(n) {
+						_this2.container = n;
+					} },
 				children
 			);
 		}
@@ -1178,7 +1151,408 @@ var CardStack = function (_Component) {
 exports.default = CardStack;
 
 /***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(17);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _utility = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Card = function (_Component) {
+	_inherits(Card, _Component);
+
+	function Card(props) {
+		_classCallCheck(this, Card);
+
+		var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+
+		_this.grab = _this.grab.bind(_this);
+		_this.grabTouch = _this.grabTouch.bind(_this);
+		_this.move = _this.move.bind(_this);
+		_this.moveTouch = _this.moveTouch.bind(_this);
+		_this.drop = _this.drop.bind(_this);
+		_this.dropTouch = _this.dropTouch.bind(_this);
+
+		_this.setGrabbedPos = _this.setGrabbedPos.bind(_this);
+
+		_this.state = {
+			start_top: undefined,
+			start_left: undefined,
+			grabbed: false,
+			left_diff: 0,
+			top_diff: 0,
+			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
+			animate_throttle: _this.props.animate_throttle ? _this.props.animate_throttle : 50
+		};
+
+		if (_this.props.animate) {
+			if (!(_this.props.animate instanceof Map)) {
+				console.error('animate prop on Card should by of type \'Map\'');
+			} else if (_this.props.animate.size > 4) {
+				console.error('animate prop on Card should not be larger than 4 key/values.');
+			} else {
+				_this.state.animate = _this.props.animate;
+				_this.animate = (0, _utility.throttle)(_this.animate.bind(_this), _this.state.animate_throttle);
+			}
+		}
+		return _this;
+	}
+
+	_createClass(Card, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			if (this.props.visible) this.setStateSize();
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate(prevProps) {
+			if (!prevProps.visible && this.props.visible) this.setStateSize();
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			if (typeof document !== 'undefined') {
+				if (this.container) {
+					this.container.removeEventListener('touchstart', this.grabTouch);
+					this.container.removeEventListener('mousedown', this.grab);
+				}
+			}
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var _this2 = this;
+
+			var card_props = { className: 'og-card' };
+			if (this.props.className) card_props.className += ' ' + this.props.className;
+			if (this.state.grabbed) card_props.className += ' og-hidden';
+
+			var grabbed_props = {
+				className: 'og-card-grabbed',
+				style: {
+					height: this.state.height,
+					width: this.state.width
+				}
+			};
+
+			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
+			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
+
+			var containerClassName = 'og-card-container';
+			if (!this.props.visible) containerClassName += ' og-hidden';
+
+			return _react2.default.createElement(
+				'div',
+				{ className: containerClassName, ref: function ref(n) {
+						_this2.container = n;
+					} },
+				_react2.default.createElement(
+					'div',
+					_extends({}, card_props, { ref: function ref(n) {
+							_this2.placeholder = n;
+						} }),
+					this.props.children
+				),
+				_react2.default.createElement(
+					'div',
+					_extends({}, grabbed_props, { ref: function ref(n) {
+							_this2.grabbed = n;
+						} }),
+					this.props.children
+				)
+			);
+		}
+	}, {
+		key: 'grab',
+		value: function grab(e) {
+			var _this3 = this;
+
+			var left_diff = e.x - this.state.start_left;
+			var top_diff = e.y - this.state.start_top;
+
+			this.setState({
+				grabbed: true,
+				left_diff: left_diff,
+				top_diff: top_diff
+			}, function () {
+				_this3.props.showNext();
+				_this3.setGrabbedPos(e.x, e.y);
+			});
+
+			document.addEventListener('mousemove', this.move);
+			document.addEventListener('mouseup', this.drop);
+		}
+	}, {
+		key: 'grabTouch',
+		value: function grabTouch(e) {
+			var _this4 = this;
+
+			e.preventDefault();
+
+			var coords = {
+				x: e.touches[0].clientX,
+				y: e.touches[0].clientY
+			};
+
+			var left_diff = coords.x - this.state.start_left;
+			var top_diff = coords.y - this.state.start_top;
+
+			this.setState({
+				grabbed: true,
+				left_diff: left_diff,
+				top_diff: top_diff
+			}, function () {
+				_this4.props.showNext();
+				_this4.setGrabbedPos(coords.x, coords.y);
+			});
+
+			document.addEventListener('touchmove', this.moveTouch);
+			document.addEventListener('touchend', this.dropTouch);
+		}
+	}, {
+		key: 'drop',
+		value: function drop(e) {
+			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
+				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
+				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
+
+				this.fireDroppedEvents(parseInt(x), parseInt(y));
+			}
+
+			this.setState({ grabbed: false });
+
+			document.removeEventListener('mousemove', this.move);
+			document.removeEventListener('mouseup', this.drop);
+		}
+	}, {
+		key: 'dropTouch',
+		value: function dropTouch(e) {
+			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
+				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
+				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
+
+				this.fireDroppedEvents(parseInt(x), parseInt(y));
+			}
+
+			this.setState({ grabbed: false });
+
+			document.removeEventListener('touchmove', this.moveTouch);
+			document.removeEventListener('touchend', this.dropTouch);
+		}
+	}, {
+		key: 'move',
+		value: function move(e) {
+			this.setGrabbedPos(e.x, e.y);
+		}
+	}, {
+		key: 'moveTouch',
+		value: function moveTouch(e) {
+			var x = e.touches[0].clientX;
+			var y = e.touches[0].clientY;
+
+			this.setGrabbedPos(x, y);
+		}
+	}, {
+		key: 'setGrabbedPos',
+		value: function setGrabbedPos(x, y) {
+			var left_move = x - this.state.start_left - this.state.left_diff;
+			var top_move = y - this.state.start_top - this.state.top_diff;
+
+			if (this.props.bottom_limit && top_move > this.props.bottom_limit - this.state.start_bottom) top_move = this.props.bottom_limit - this.state.start_bottom;else if (this.props.top_limit && this.state.start_top + top_move < this.props.top_limit) top_move = this.props.top_limit - this.state.start_top;
+
+			if (this.props.right_limit && left_move > this.props.right_limit - this.state.start_right) left_move = this.props.right_limit - this.state.start_right;else if (this.props.left_limit && this.state.start_left + left_move < this.props.left_limit) left_move = this.props.left_limit - this.state.start_left;
+
+			this.grabbed.style.left = left_move + 'px';
+			this.grabbed.style.top = top_move + 'px';
+
+			if (this.state.animate) this.animate(left_move, top_move);
+		}
+	}, {
+		key: 'fireDroppedEvents',
+		value: function fireDroppedEvents(x, y) {
+			var direction = null;
+			var amount = 0;
+
+			var abs = Math.abs;
+
+			if (this.props.onRight && x > this.props.right_trigger && x > amount) {
+				direction = 'right';
+				amount = x;
+			} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
+				direction = 'left';
+				amount = abs(x);
+			}
+
+			if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
+				direction = 'bottom';
+				amount = y;
+			} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
+				direction = 'top';
+				amount = abs(y);
+			}
+
+			if (this.props.onClick && !direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
+				direction = 'click';
+			}
+
+			switch (direction) {
+				case 'top':
+					this.props.onTop(this.props.data, amount);
+					break;
+				case 'right':
+					this.props.onRight(this.props.data, amount);
+					break;
+				case 'bottom':
+					this.props.onBottom(this.props.data, amount);
+					break;
+				case 'left':
+					this.props.onLeft(this.props.data, amount);
+					break;
+				case 'click':
+					this.props.onClick(this.props.data);
+					break;
+				default:
+					this.props.revert();
+					break;
+			}
+		}
+	}, {
+		key: 'setStateSize',
+		value: function setStateSize() {
+			if (typeof document !== 'undefined') {
+				var rect = this.container.getBoundingClientRect();
+
+				var new_state = {
+					start_top: rect.top,
+					start_right: rect.right,
+					start_bottom: rect.bottom,
+					start_left: rect.left,
+					width: this.placeholder.clientWidth,
+					height: this.placeholder.clientHeight
+				};
+
+				var elem = this.container;
+
+				if (!this.props.undraggable) {
+					elem.addEventListener('touchstart', this.grabTouch);
+					elem.addEventListener('mousedown', this.grab);
+				}
+
+				this.setState(new_state);
+			}
+		}
+	}, {
+		key: 'animate',
+		value: function animate(x, y) {
+			if (!this.grabbed) return;
+
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var animation = _step.value;
+
+					if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+						this.grabbed.style[animation[0]] = animation[1](x, y);
+					} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+		}
+	}]);
+
+	return Card;
+}(_react.Component);
+
+exports.default = Card;
+
+/***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+function checkDCE() {
+  /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */
+  if (
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined' ||
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== 'function'
+  ) {
+    return;
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    // This branch is unreachable because this function is only called
+    // in production, but the condition is true only in development.
+    // Therefore if the branch is still here, dead code elimination wasn't
+    // properly applied.
+    // Don't change the message. React DevTools relies on it. Also make sure
+    // this message doesn't occur elsewhere in this function, or it will cause
+    // a false positive.
+    throw new Error('^_^');
+  }
+  try {
+    // Verify that the code above has been dead code eliminated (DCE'd).
+    __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
+  } catch (err) {
+    // DevTools shouldn't crash React, no matter what.
+    // We should still report in case we break this code.
+    console.error(err);
+  }
+}
+
+if (process.env.NODE_ENV === 'production') {
+  // DCE check should happen before ReactDOM bundle executes so that
+  // DevTools can report bad minification during injection.
+  checkDCE();
+  module.exports = __webpack_require__(18);
+} else {
+  module.exports = __webpack_require__(21);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1414,7 +1788,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1429,7 +1803,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
  * @typechecks
  */
 
-var isNode = __webpack_require__(19);
+var isNode = __webpack_require__(20);
 
 /**
  * @param {*} object The object to check.
@@ -1442,7 +1816,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1470,7 +1844,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1503,9 +1877,9 @@ var shallowEqual = __webpack_require__(8);
 var containsNode = __webpack_require__(9);
 var focusNode = __webpack_require__(10);
 var emptyObject = __webpack_require__(11);
-var checkPropTypes = __webpack_require__(21);
-var hyphenateStyleName = __webpack_require__(23);
-var camelizeStyleName = __webpack_require__(25);
+var checkPropTypes = __webpack_require__(22);
+var hyphenateStyleName = __webpack_require__(24);
+var camelizeStyleName = __webpack_require__(26);
 
 /**
  * WARNING: DO NOT manually require this module.
@@ -16872,7 +17246,7 @@ module.exports = reactDom;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16888,7 +17262,7 @@ module.exports = reactDom;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(12);
   var warning = __webpack_require__(13);
-  var ReactPropTypesSecret = __webpack_require__(22);
+  var ReactPropTypesSecret = __webpack_require__(23);
   var loggedTypeFailures = {};
 }
 
@@ -16939,7 +17313,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16958,7 +17332,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16973,7 +17347,7 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var hyphenate = __webpack_require__(24);
+var hyphenate = __webpack_require__(25);
 
 var msPattern = /^ms-/;
 
@@ -17000,7 +17374,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17036,7 +17410,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17051,7 +17425,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(26);
+var camelize = __webpack_require__(27);
 
 var msPattern = /^-ms-/;
 
@@ -17079,7 +17453,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17112,355 +17486,6 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = __webpack_require__(3);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _utility = __webpack_require__(14);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Card = function (_Component) {
-	_inherits(Card, _Component);
-
-	function Card(props) {
-		_classCallCheck(this, Card);
-
-		var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
-
-		_this.grab = _this.grab.bind(_this);
-		_this.grabTouch = _this.grabTouch.bind(_this);
-		_this.move = _this.move.bind(_this);
-		_this.moveTouch = _this.moveTouch.bind(_this);
-		_this.drop = _this.drop.bind(_this);
-		_this.dropTouch = _this.dropTouch.bind(_this);
-
-		_this.setGrabbedPos = _this.setGrabbedPos.bind(_this);
-
-		_this.state = {
-			start_top: undefined,
-			start_left: undefined,
-			grabbed: false,
-			left_diff: 0,
-			top_diff: 0,
-			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
-			animate_throttle: _this.props.animate_throttle ? _this.props.animate_throttle : 50
-		};
-
-		if (_this.props.animate) {
-			if (!(_this.props.animate instanceof Map)) {
-				console.error('animate prop on Card should by of type \'Map\'');
-			} else if (_this.props.animate.size > 4) {
-				console.error('animate prop on Card should not be larger than 4 key/values.');
-			} else {
-				_this.state.animate = _this.props.animate;
-				_this.animate = (0, _utility.throttle)(_this.animate.bind(_this), _this.state.animate_throttle);
-			}
-		}
-		return _this;
-	}
-
-	_createClass(Card, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			if (this.props.visible) this.setStateSize();
-		}
-	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate(prevProps) {
-			if (!prevProps.visible && this.props.visible) this.setStateSize();
-		}
-	}, {
-		key: 'componentWillUnmount',
-		value: function componentWillUnmount() {
-			if (typeof document !== 'undefined') {
-				if (this.state.element) {
-					this.state.element.removeEventListener('touchstart', this.grabTouch);
-					this.state.element.removeEventListener('mousedown', this.grab);
-				}
-			}
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var _this2 = this;
-
-			var card_props = { className: 'og-card' };
-			if (this.props.className) card_props.className += ' ' + this.props.className;
-			if (this.state.grabbed) card_props.className += ' og-hidden';
-
-			var grabbed_props = {
-				className: 'og-card-grabbed',
-				style: {
-					height: this.state.height,
-					width: this.state.width
-				}
-			};
-
-			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
-			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
-
-			var containerClassName = 'og-card-container';
-			if (!this.props.visible) containerClassName += ' og-hidden';
-
-			return _react2.default.createElement(
-				'div',
-				{ className: containerClassName },
-				_react2.default.createElement(
-					'div',
-					_extends({}, card_props, { ref: function ref(n) {
-							_this2.placeholder = n;
-						} }),
-					this.props.children
-				),
-				_react2.default.createElement(
-					'div',
-					_extends({}, grabbed_props, { ref: function ref(n) {
-							_this2.grabbed = n;
-						} }),
-					this.props.children
-				)
-			);
-		}
-	}, {
-		key: 'grab',
-		value: function grab(e) {
-			var _this3 = this;
-
-			var left_diff = e.x - this.state.start_left;
-			var top_diff = e.y - this.state.start_top;
-
-			this.setState({
-				grabbed: true,
-				left_diff: left_diff,
-				top_diff: top_diff
-			}, function () {
-				_this3.props.showNext();
-				_this3.setGrabbedPos(e.x, e.y);
-			});
-
-			document.addEventListener('mousemove', this.move);
-			document.addEventListener('mouseup', this.drop);
-		}
-	}, {
-		key: 'grabTouch',
-		value: function grabTouch(e) {
-			var _this4 = this;
-
-			e.preventDefault();
-
-			var coords = {
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY
-			};
-
-			var left_diff = coords.x - this.state.start_left;
-			var top_diff = coords.y - this.state.start_top;
-
-			this.setState({
-				grabbed: true,
-				left_diff: left_diff,
-				top_diff: top_diff
-			}, function () {
-				_this4.props.showNext();
-				_this4.setGrabbedPos(coords.x, coords.y);
-			});
-
-			document.addEventListener('touchmove', this.moveTouch);
-			document.addEventListener('touchend', this.dropTouch);
-		}
-	}, {
-		key: 'drop',
-		value: function drop(e) {
-			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
-				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
-				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
-
-				this.fireDroppedEvents(parseInt(x), parseInt(y));
-			}
-
-			this.setState({ grabbed: false });
-
-			document.removeEventListener('mousemove', this.move);
-			document.removeEventListener('mouseup', this.drop);
-		}
-	}, {
-		key: 'dropTouch',
-		value: function dropTouch(e) {
-			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
-				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
-				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
-
-				this.fireDroppedEvents(parseInt(x), parseInt(y));
-			}
-
-			this.setState({ grabbed: false });
-
-			document.removeEventListener('touchmove', this.moveTouch);
-			document.removeEventListener('touchend', this.dropTouch);
-		}
-	}, {
-		key: 'move',
-		value: function move(e) {
-			this.setGrabbedPos(e.x, e.y);
-		}
-	}, {
-		key: 'moveTouch',
-		value: function moveTouch(e) {
-			var x = e.touches[0].clientX;
-			var y = e.touches[0].clientY;
-
-			this.setGrabbedPos(x, y);
-		}
-	}, {
-		key: 'setGrabbedPos',
-		value: function setGrabbedPos(x, y) {
-			var left_move = x - this.state.start_left - this.state.left_diff;
-			var top_move = y - this.state.start_top - this.state.top_diff;
-
-			this.grabbed.style.left = left_move + 'px';
-			this.grabbed.style.top = top_move + 'px';
-
-			if (this.state.animate) this.animate(left_move, top_move);
-		}
-	}, {
-		key: 'fireDroppedEvents',
-		value: function fireDroppedEvents(x, y) {
-			var direction = null;
-			var amount = 0;
-
-			var abs = Math.abs;
-
-			if (this.props.onRight && x > this.props.right_trigger && x > amount) {
-				direction = 'right';
-				amount = x;
-			} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
-				direction = 'left';
-				amount = abs(x);
-			}
-
-			if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
-				direction = 'bottom';
-				amount = y;
-			} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
-				direction = 'top';
-				amount = abs(y);
-			}
-
-			if (this.props.onClick && !direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
-				direction = 'click';
-			}
-
-			switch (direction) {
-				case 'top':
-					this.props.onTop(this.props.data, amount);
-					break;
-				case 'right':
-					this.props.onRight(this.props.data, amount);
-					break;
-				case 'bottom':
-					this.props.onBottom(this.props.data, amount);
-					break;
-				case 'left':
-					this.props.onLeft(this.props.data, amount);
-					break;
-				case 'click':
-					this.props.onClick(this.props.data);
-					break;
-				default:
-					this.props.revert();
-					break;
-			}
-		}
-	}, {
-		key: 'setStateSize',
-		value: function setStateSize() {
-			if (typeof document !== 'undefined') {
-				var rect = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
-
-				var new_state = {
-					start_top: rect.top,
-					start_left: rect.left,
-					width: this.placeholder.clientWidth,
-					height: this.placeholder.clientHeight
-				};
-
-				var elem = _reactDom2.default.findDOMNode(this);
-
-				if (!this.props.undraggable) {
-					elem.addEventListener('touchstart', this.grabTouch);
-					elem.addEventListener('mousedown', this.grab);
-				}
-
-				new_state.element = elem;
-
-				this.setState(new_state);
-			}
-		}
-	}, {
-		key: 'animate',
-		value: function animate(x, y) {
-			if (!this.grabbed) return;
-
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
-
-			try {
-				for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var animation = _step.value;
-
-					if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
-						this.grabbed.style[animation[0]] = animation[1](x, y);
-					} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
-					}
-				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
-					}
-				}
-			}
-		}
-	}]);
-
-	return Card;
-}(_react.Component);
-
-exports.default = Card;
 
 /***/ })
 /******/ ]);

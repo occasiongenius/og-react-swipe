@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 import { throttle } from '../../utility.js';
 
@@ -33,6 +32,30 @@ class CardStack extends Component {
 
 		this.refs = {};
 	}
+
+	componentDidMount() {
+		if (this.container && (this.props.limit || this.props.bottom_limit)) {
+			
+			let rect = this.container.getBoundingClientRect();
+
+			let new_state = {
+				top_limit: this.props.top_limit ?
+					rect.top - this.props.top_limit :
+						this.props.limit ? rect.top - this.props.limit : undefined,
+				right_limit: this.props.right_limit ?
+					rect.right + this.props.right_limit :
+						this.props.limit ? rect.right + this.props.limit : undefined,
+				bottom_limit: this.props.bottom_limit ?
+					rect.bottom + this.props.bottom_limit :
+						this.props.limit ? rect.bottom + this.props.limit : undefined,
+				left_limit: this.props.left_limit ?
+					rect.left - this.props.left_limit :
+						this.props.limit ? rect.left - this.props.limit : undefined,
+			};
+
+			this.setState(new_state);
+		}
+	}
 	
 	render() {
 		let className = 'og-card-stack';
@@ -50,6 +73,10 @@ class CardStack extends Component {
 			onLeft: this.state.onLeft,
 			revert: this.revert,
 			showNext: this.showNext,
+			top_limit: this.state.top_limit,
+			right_limit: this.state.right_limit,
+			bottom_limit: this.state.bottom_limit,
+			left_limit: this.state.left_limit,
 		};
 
 		if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
@@ -100,7 +127,7 @@ class CardStack extends Component {
 		let style = { ...this.props.style };
 
 		return (
-			<div className={ className } style={ style }>
+			<div className={ className } style={ style } ref={ n => { this.container = n; } }>
 				{ children }
 			</div>
 		);
