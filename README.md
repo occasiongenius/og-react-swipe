@@ -12,6 +12,10 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * onRight (func): optional, function executed when a card is dragged to the right of the stack
  * onBottom (func): optional, function executed when a card is dragged below the stack
  * onLeft (func): optional, function executed when a card is dragged to the left of the stack
+ * topLimit (int): optional, number of pixels a card is limited in movement to ont the top
+ * rightLimit (int): options, number of pixels a card is limited in movement to on the right
+ * bottomLimit (int): options, number of pixels a card is limited in movement to on the bottom
+ * leftLimit (int): options, number of pixels a card is limited in movement to on the left
 
 #### Card
  * className (str): optional, provide a custom className for the Card (not held)
