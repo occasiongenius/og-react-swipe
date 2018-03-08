@@ -34,22 +34,23 @@ class CardStack extends Component {
 	}
 
 	componentDidMount() {
-		if (this.container && (this.props.limit || this.props.bottom_limit)) {
+		if (this.container && (this.props.limit || this.props.topLimit
+			|| this.props.rightLimit || this.props.bottomLimit || this.props.leftLimit)) {
 			
 			let rect = this.container.getBoundingClientRect();
 
 			let new_state = {
-				top_limit: this.props.top_limit ?
-					rect.top - this.props.top_limit :
+				top_limit: this.props.topLimit ?
+					rect.top - this.props.topLimit :
 						this.props.limit ? rect.top - this.props.limit : undefined,
-				right_limit: this.props.right_limit ?
-					rect.right + this.props.right_limit :
+				right_limit: this.props.rightLimit ?
+					rect.right + this.props.rightLimit :
 						this.props.limit ? rect.right + this.props.limit : undefined,
-				bottom_limit: this.props.bottom_limit ?
-					rect.bottom + this.props.bottom_limit :
+				bottom_limit: this.props.bottonLimit ?
+					rect.bottom + this.props.bottomLimit :
 						this.props.limit ? rect.bottom + this.props.limit : undefined,
-				left_limit: this.props.left_limit ?
-					rect.left - this.props.left_limit :
+				left_limit: this.props.leftLimit ?
+					rect.left - this.props.leftLimit :
 						this.props.limit ? rect.left - this.props.limit : undefined,
 			};
 

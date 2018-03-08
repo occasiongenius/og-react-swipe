@@ -1005,15 +1005,15 @@ var CardStack = function (_Component) {
 	_createClass(CardStack, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			if (this.container && (this.props.limit || this.props.bottom_limit)) {
+			if (this.container && (this.props.limit || this.props.topLimit || this.props.rightLimit || this.props.bottomLimit || this.props.leftLimit)) {
 
 				var rect = this.container.getBoundingClientRect();
 
 				var new_state = {
-					top_limit: this.props.top_limit ? rect.top - this.props.top_limit : this.props.limit ? rect.top - this.props.limit : undefined,
-					right_limit: this.props.right_limit ? rect.right + this.props.right_limit : this.props.limit ? rect.right + this.props.limit : undefined,
-					bottom_limit: this.props.bottom_limit ? rect.bottom + this.props.bottom_limit : this.props.limit ? rect.bottom + this.props.limit : undefined,
-					left_limit: this.props.left_limit ? rect.left - this.props.left_limit : this.props.limit ? rect.left - this.props.limit : undefined
+					top_limit: this.props.topLimit ? rect.top - this.props.topLimit : this.props.limit ? rect.top - this.props.limit : undefined,
+					right_limit: this.props.rightLimit ? rect.right + this.props.rightLimit : this.props.limit ? rect.right + this.props.limit : undefined,
+					bottom_limit: this.props.bottonLimit ? rect.bottom + this.props.bottomLimit : this.props.limit ? rect.bottom + this.props.limit : undefined,
+					left_limit: this.props.leftLimit ? rect.left - this.props.leftLimit : this.props.limit ? rect.left - this.props.limit : undefined
 				};
 
 				this.setState(new_state);
@@ -1207,7 +1207,7 @@ var Card = function (_Component) {
 			left_diff: 0,
 			top_diff: 0,
 			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
-			animate_throttle: _this.props.animate_throttle ? _this.props.animate_throttle : 50
+			animate_throttle: _this.props.animateThrottle ? _this.props.animateThrottle : 50
 		};
 
 		if (_this.props.animate) {
