@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { throttle } from '../../utility.js';
 
 class Card extends Component {
 	constructor(props) {
@@ -20,7 +21,20 @@ class Card extends Component {
 			grabbed: false,
 			left_diff: 0,
 			top_diff: 0,
+			animate: this.props.animate instanceof Map ? this.props.animate : undefined,
+			animate_throttle: this.props.animate_throttle ? this.props.animate_throttle : 50,
 		};
+
+		if (this.props.animate) {
+			if (!(this.props.animate instanceof Map)) {
+				console.error('animate prop on Card should by of type \'Map\'');
+			} else if (this.props.animate.size > 4) {
+				console.error('animate prop on Card should not be larger than 4 key/values.');
+			} else {
+				this.state.animate = this.props.animate;
+				this.animate = throttle(this.animate.bind(this), this.state.animate_throttle);
+			}
+		}
 	}
 
 	componentDidMount() {
@@ -52,6 +66,7 @@ class Card extends Component {
 				width: this.state.width,
 			},
 		};
+
 		if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
 		if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
 
@@ -153,10 +168,14 @@ class Card extends Component {
 	}
 
 	setGrabbedPos(x, y) {
-		this.grabbed.style.left = 
-			(x - this.state.start_left - this.state.left_diff) + 'px';
-		this.grabbed.style.top = 
-			(y - this.state.start_top - this.state.top_diff) + 'px';
+		let left_move = x - this.state.start_left - this.state.left_diff;
+		let top_move = y - this.state.start_top - this.state.top_diff;
+
+		this.grabbed.style.left = left_move + 'px';
+		this.grabbed.style.top = top_move + 'px';
+
+		if (this.state.animate)
+			this.animate(left_move, top_move);
 	}
 
 	fireDroppedEvents(x, y) {
@@ -181,7 +200,8 @@ class Card extends Component {
 			amount = abs(y);
 		}
 
-		if (!direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
+		if (this.props.onClick && !direction && abs(x) < this.props.click_bound 
+			&& abs(y) < this.props.click_bound) {
 			direction = 'click';
 		}
 
@@ -229,6 +249,17 @@ class Card extends Component {
 			new_state.element = elem;
 
 			this.setState(new_state);
+		}
+	}
+
+	animate(x, y) {
+		if (!this.grabbed) return;
+
+		for (let animation of this.state.animate) {
+			if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+				this.grabbed.style[animation[0]] = animation[1](x, y);
+			} else
+				console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
 		}
 	}
 }

@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -341,9 +341,9 @@ if (process.env.NODE_ENV === 'production') {
   // DCE check should happen before ReactDOM bundle executes so that
   // DevTools can report bad minification during injection.
   checkDCE();
-  module.exports = __webpack_require__(16);
+  module.exports = __webpack_require__(17);
 } else {
-  module.exports = __webpack_require__(19);
+  module.exports = __webpack_require__(20);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
@@ -694,7 +694,7 @@ module.exports = shallowEqual;
  * 
  */
 
-var isTextNode = __webpack_require__(17);
+var isTextNode = __webpack_require__(18);
 
 /*eslint-disable no-bitwise */
 
@@ -911,7 +911,64 @@ module.exports = warning;
 "use strict";
 
 
-var _CardStack = __webpack_require__(15);
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+var throttle = exports.throttle = function throttle(func, wait, options) {
+	var context, args, result;
+	var timeout = null;
+	var previous = 0;
+
+	if (!options) options = {};
+
+	var later = function later() {
+		previous = options.leading === false ? 0 : Date.now();
+		timeout = null;
+		result = func.apply(context, args);
+		if (!timeout) context = args = null;
+	};
+
+	return function () {
+		var now = Date.now();
+
+		if (!previous && options.leading === false) previous = now;
+
+		var remaining = wait - (now - previous);
+		context = this;
+		args = arguments;
+
+		if (remaining <= 0 || remaining > wait) {
+
+			if (timeout) {
+				clearTimeout(timeout);
+				timeout = null;
+			}
+
+			previous = now;
+			result = func.apply(context, args);
+
+			if (!timeout) context = args = null;
+		} else if (!timeout && options.trailing !== false) {
+			timeout = setTimeout(later, remaining);
+		}
+
+		return result;
+	};
+};
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _CardStack = __webpack_require__(16);
 
 var _CardStack2 = _interopRequireDefault(_CardStack);
 
@@ -927,7 +984,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -949,7 +1006,7 @@ var _reactDom = __webpack_require__(3);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _utility = __webpack_require__(26);
+var _utility = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1121,7 +1178,7 @@ var CardStack = function (_Component) {
 exports.default = CardStack;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1357,7 +1414,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1372,7 +1429,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
  * @typechecks
  */
 
-var isNode = __webpack_require__(18);
+var isNode = __webpack_require__(19);
 
 /**
  * @param {*} object The object to check.
@@ -1385,7 +1442,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1413,7 +1470,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1446,9 +1503,9 @@ var shallowEqual = __webpack_require__(8);
 var containsNode = __webpack_require__(9);
 var focusNode = __webpack_require__(10);
 var emptyObject = __webpack_require__(11);
-var checkPropTypes = __webpack_require__(20);
-var hyphenateStyleName = __webpack_require__(22);
-var camelizeStyleName = __webpack_require__(24);
+var checkPropTypes = __webpack_require__(21);
+var hyphenateStyleName = __webpack_require__(23);
+var camelizeStyleName = __webpack_require__(25);
 
 /**
  * WARNING: DO NOT manually require this module.
@@ -16815,7 +16872,7 @@ module.exports = reactDom;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16831,7 +16888,7 @@ module.exports = reactDom;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(12);
   var warning = __webpack_require__(13);
-  var ReactPropTypesSecret = __webpack_require__(21);
+  var ReactPropTypesSecret = __webpack_require__(22);
   var loggedTypeFailures = {};
 }
 
@@ -16882,7 +16939,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16901,7 +16958,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16916,7 +16973,7 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var hyphenate = __webpack_require__(23);
+var hyphenate = __webpack_require__(24);
 
 var msPattern = /^ms-/;
 
@@ -16943,7 +17000,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16979,7 +17036,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16994,7 +17051,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(25);
+var camelize = __webpack_require__(26);
 
 var msPattern = /^-ms-/;
 
@@ -17022,7 +17079,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17057,63 +17114,6 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-// Returns a function, that, when invoked, will only be triggered at most once
-// during a given window of time. Normally, the throttled function will run
-// as much as it can, without ever going more than once per `wait` duration;
-// but if you'd like to disable the execution on the leading edge, pass
-// `{leading: false}`. To disable execution on the trailing edge, ditto.
-var throttle = exports.throttle = function throttle(func, wait, options) {
-	var context, args, result;
-	var timeout = null;
-	var previous = 0;
-
-	if (!options) options = {};
-
-	var later = function later() {
-		previous = options.leading === false ? 0 : Date.now();
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
-
-	return function () {
-		var now = Date.now();
-
-		if (!previous && options.leading === false) previous = now;
-
-		var remaining = wait - (now - previous);
-		context = this;
-		args = arguments;
-
-		if (remaining <= 0 || remaining > wait) {
-
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
-			}
-
-			previous = now;
-			result = func.apply(context, args);
-
-			if (!timeout) context = args = null;
-		} else if (!timeout && options.trailing !== false) {
-			timeout = setTimeout(later, remaining);
-		}
-
-		return result;
-	};
-};
-
-/***/ }),
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17135,6 +17135,8 @@ var _react2 = _interopRequireDefault(_react);
 var _reactDom = __webpack_require__(3);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _utility = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17166,8 +17168,21 @@ var Card = function (_Component) {
 			start_left: undefined,
 			grabbed: false,
 			left_diff: 0,
-			top_diff: 0
+			top_diff: 0,
+			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
+			animate_throttle: _this.props.animate_throttle ? _this.props.animate_throttle : 50
 		};
+
+		if (_this.props.animate) {
+			if (!(_this.props.animate instanceof Map)) {
+				console.error('animate prop on Card should by of type \'Map\'');
+			} else if (_this.props.animate.size > 4) {
+				console.error('animate prop on Card should not be larger than 4 key/values.');
+			} else {
+				_this.state.animate = _this.props.animate;
+				_this.animate = (0, _utility.throttle)(_this.animate.bind(_this), _this.state.animate_throttle);
+			}
+		}
 		return _this;
 	}
 
@@ -17207,6 +17222,7 @@ var Card = function (_Component) {
 					width: this.state.width
 				}
 			};
+
 			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
 			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
 
@@ -17325,8 +17341,13 @@ var Card = function (_Component) {
 	}, {
 		key: 'setGrabbedPos',
 		value: function setGrabbedPos(x, y) {
-			this.grabbed.style.left = x - this.state.start_left - this.state.left_diff + 'px';
-			this.grabbed.style.top = y - this.state.start_top - this.state.top_diff + 'px';
+			var left_move = x - this.state.start_left - this.state.left_diff;
+			var top_move = y - this.state.start_top - this.state.top_diff;
+
+			this.grabbed.style.left = left_move + 'px';
+			this.grabbed.style.top = top_move + 'px';
+
+			if (this.state.animate) this.animate(left_move, top_move);
 		}
 	}, {
 		key: 'fireDroppedEvents',
@@ -17352,7 +17373,7 @@ var Card = function (_Component) {
 				amount = abs(y);
 			}
 
-			if (!direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
+			if (this.props.onClick && !direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
 				direction = 'click';
 			}
 
@@ -17400,6 +17421,38 @@ var Card = function (_Component) {
 				new_state.element = elem;
 
 				this.setState(new_state);
+			}
+		}
+	}, {
+		key: 'animate',
+		value: function animate(x, y) {
+			if (!this.grabbed) return;
+
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var animation = _step.value;
+
+					if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+						this.grabbed.style[animation[0]] = animation[1](x, y);
+					} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
 			}
 		}
 	}]);
