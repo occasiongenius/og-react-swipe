@@ -19,6 +19,8 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * children (obj, arr): the children to be rendered inside the Card
  * data (obj): optional, data to be sent to on[Direction] callback functions on the CardStack
  * undraggable (bool): optional, make a card undraggable (great for end of stack)
+ * animate (Map): optional, map of 'css attribute' => fn(x, y) where x and y are the position of the card relative to its starting position, and the return of fn is the value of the css attribute
+ * animateThrottle (int): optional, number of ms to throttle animation calls by (default 50ms)
 
 The on[Direction] callback functions on the CardStack will receive a parameter of the data object on each Card, and a second parameter that is the number of pixels the card was dragged from its middle
 
@@ -39,6 +41,7 @@ class App extends Component {
 		// utility functions
 		this.round = Math.round;
 		this.random = Math.random;
+		this.abs = Math.abs;
 	}
 
 	render() {
@@ -49,6 +52,19 @@ class App extends Component {
 				this.round(this.random() * 255) + ','	+
 				this.round(this.random() * 255) + ','	+
 				this.round(this.random() * 255) + ')';
+
+			let animate = new Map([
+				[
+					'opacity',
+					(x, y) => {
+						x = this.abs(x);
+						
+						if (x > 100) x = 100;
+
+						return (120 - x) / 120;
+					}
+				]
+			]);
 
 			cards.push(
 				<Card key={ i } data={{ card_num: i }} undraggable={ i == 9 }>
@@ -91,3 +107,6 @@ class App extends Component {
 
 ReactDOM.render(<App />, document.getElementById('app'));
 ```
+
+## Planned Features
+ * animation hook: a function passed to Card that will be passed x,y position of the mouse at the same throttled rate as animations. This can be sued for external animations and dom updates
