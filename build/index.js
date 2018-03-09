@@ -1012,7 +1012,7 @@ var CardStack = function (_Component) {
 				var new_state = {
 					top_limit: this.props.topLimit ? rect.top - this.props.topLimit : this.props.limit ? rect.top - this.props.limit : undefined,
 					right_limit: this.props.rightLimit ? rect.right + this.props.rightLimit : this.props.limit ? rect.right + this.props.limit : undefined,
-					bottom_limit: this.props.bottonLimit ? rect.bottom + this.props.bottomLimit : this.props.limit ? rect.bottom + this.props.limit : undefined,
+					bottom_limit: this.props.bottomLimit ? rect.bottom + this.props.bottomLimit : this.props.limit ? rect.bottom + this.props.limit : undefined,
 					left_limit: this.props.leftLimit ? rect.left - this.props.leftLimit : this.props.limit ? rect.left - this.props.limit : undefined
 				};
 
@@ -1037,6 +1037,7 @@ var CardStack = function (_Component) {
 				onRight: this.state.onRight,
 				onBottom: this.state.onBottom,
 				onLeft: this.state.onLeft,
+				onClick: this.state.onClick,
 				revert: this.revert,
 				showNext: this.showNext,
 				top_limit: this.state.top_limit,
@@ -1204,6 +1205,7 @@ var Card = function (_Component) {
 			start_top: undefined,
 			start_left: undefined,
 			grabbed: false,
+			nullify_click: false,
 			left_diff: 0,
 			top_diff: 0,
 			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
@@ -1325,7 +1327,8 @@ var Card = function (_Component) {
 			this.setState({
 				grabbed: true,
 				left_diff: left_diff,
-				top_diff: top_diff
+				top_diff: top_diff,
+				first_grab: coords
 			}, function () {
 				_this4.props.showNext();
 				_this4.setGrabbedPos(coords.x, coords.y);
@@ -1344,7 +1347,10 @@ var Card = function (_Component) {
 				this.fireDroppedEvents(parseInt(x), parseInt(y));
 			}
 
-			this.setState({ grabbed: false });
+			this.setState({
+				grabbed: false,
+				nullify_click: false
+			});
 
 			document.removeEventListener('mousemove', this.move);
 			document.removeEventListener('mouseup', this.drop);
@@ -1359,7 +1365,10 @@ var Card = function (_Component) {
 				this.fireDroppedEvents(parseInt(x), parseInt(y));
 			}
 
-			this.setState({ grabbed: false });
+			this.setState({
+				grabbed: false,
+				nullify_click: false
+			});
 
 			document.removeEventListener('touchmove', this.moveTouch);
 			document.removeEventListener('touchend', this.dropTouch);
@@ -1390,6 +1399,10 @@ var Card = function (_Component) {
 			this.grabbed.style.left = left_move + 'px';
 			this.grabbed.style.top = top_move + 'px';
 
+			// is this a click? if so, set nullify click so
+			// that click event is not fired on drop
+			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) this.setState({ nullify_click: true });
+
 			if (this.state.animate) this.animate(left_move, top_move);
 		}
 	}, {
@@ -1416,9 +1429,7 @@ var Card = function (_Component) {
 				amount = abs(y);
 			}
 
-			if (this.props.onClick && !direction && abs(x) < this.props.click_bound && abs(y) < this.props.click_bound) {
-				direction = 'click';
-			}
+			if (this.props.onClick && !direction && !this.state.nullify_click) direction = 'click';
 
 			switch (direction) {
 				case 'top':

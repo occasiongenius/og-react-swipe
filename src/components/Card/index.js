@@ -19,6 +19,7 @@ class Card extends Component {
 			start_top: undefined,
 			start_left: undefined,
 			grabbed: false,
+			nullify_click: false,
 			left_diff: 0,
 			top_diff: 0,
 			animate: this.props.animate instanceof Map ? this.props.animate : undefined,
@@ -117,6 +118,7 @@ class Card extends Component {
 			grabbed: true,
 			left_diff,
 			top_diff,
+			first_grab: coords,
 		}, () => {
 			this.props.showNext();
 			this.setGrabbedPos(coords.x, coords.y);
@@ -135,7 +137,10 @@ class Card extends Component {
 			this.fireDroppedEvents(parseInt(x), parseInt(y));
 		}
 
-		this.setState({ grabbed: false });
+		this.setState({ 
+			grabbed: false,
+			nullify_click: false,
+		});
 
 		document.removeEventListener('mousemove', this.move);
 		document.removeEventListener('mouseup', this.drop);
@@ -150,7 +155,10 @@ class Card extends Component {
 			this.fireDroppedEvents(parseInt(x), parseInt(y));
 		}
 
-		this.setState({ grabbed: false });
+		this.setState({ 
+			grabbed: false,
+			nullify_click: false,
+		});
 
 		document.removeEventListener('touchmove', this.moveTouch);
 		document.removeEventListener('touchend', this.dropTouch);
@@ -184,6 +192,12 @@ class Card extends Component {
 		this.grabbed.style.left = left_move + 'px';
 		this.grabbed.style.top = top_move + 'px';
 
+		// is this a click? if so, set nullify click so
+		// that click event is not fired on drop
+		if (this.props.click_bound && !this.state.nullify_click 
+			&& (left_move > this.props.click_bound || top_move > this.props.click_bound))
+			this.setState({ nullify_click: true });
+
 		if (this.state.animate)
 			this.animate(left_move, top_move);
 	}
@@ -210,10 +224,8 @@ class Card extends Component {
 			amount = abs(y);
 		}
 
-		if (this.props.onClick && !direction && abs(x) < this.props.click_bound 
-			&& abs(y) < this.props.click_bound) {
+		if (this.props.onClick && !direction && !this.state.nullify_click)
 			direction = 'click';
-		}
 
 		switch (direction) {
 			case 'top':

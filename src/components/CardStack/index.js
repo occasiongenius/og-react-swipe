@@ -72,6 +72,7 @@ class CardStack extends Component {
 			onRight: this.state.onRight,
 			onBottom: this.state.onBottom,
 			onLeft: this.state.onLeft,
+			onClick: this.state.onClick,
 			revert: this.revert,
 			showNext: this.showNext,
 			top_limit: this.state.top_limit,
