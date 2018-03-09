@@ -21,7 +21,7 @@ class CardStack extends Component {
 			right_trigger: diff,
 			bottom_trigger: diff,
 			left_trigger: -diff,
-			click_bound: this.props.click_bound ? this.props.click_bound : 5,
+			click_bound: this.props.clickBound ? this.props.clickBound : 1,
 			onTop: this.props.onTop ? this.onTop : undefined,
 			onRight: this.props.onRight ? this.onRight : undefined,
 			onBottom: this.props.onBottom ? this.onBottom : undefined,

@@ -989,7 +989,7 @@ var CardStack = function (_Component) {
 			right_trigger: diff,
 			bottom_trigger: diff,
 			left_trigger: -diff,
-			click_bound: _this.props.click_bound ? _this.props.click_bound : 5,
+			click_bound: _this.props.click_bound ? _this.props.click_bound : 1,
 			onTop: _this.props.onTop ? _this.onTop : undefined,
 			onRight: _this.props.onRight ? _this.onRight : undefined,
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
