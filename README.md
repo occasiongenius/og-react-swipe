@@ -19,7 +19,7 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * bottomLimit (int): options, number of pixels a card is limited in movement to on the bottom
  * leftLimit (int): options, number of pixels a card is limited in movement to on the left
 
-#### Card - A single slide of information in your stacj of cards
+#### Card - A single slide of information in your stack of cards
  * className (str): optional, provide a custom className for the Card (not held)
  * grabbedClassName (str): optional, provide a custom className for the Card (when held)
  * children (obj, arr): the children to be rendered inside the Card
@@ -91,6 +91,8 @@ class App extends Component {
 					onRunOut={ this.onRunOut }
 					onLeft={ this.leftDrag }
 					onRight={ this.rightDrag }
+					onClick={ this.click }
+					clickBount={ 3 }
 					limit={ 120 }
 					bottomLimit={ 40 }>
 					{ cards }
@@ -106,6 +108,11 @@ class App extends Component {
 
 	rightDrag(data, amount) {
 		console.log('Dragged right: ', amount);
+		console.log(data);
+	}
+
+	click(data, amount) {
+		console.log('Click!');
 		console.log(data);
 	}
 
