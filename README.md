@@ -17,7 +17,7 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * bottomLimit (int): options, number of pixels a card is limited in movement to on the bottom
  * leftLimit (int): options, number of pixels a card is limited in movement to on the left
 
-#### Card
+#### Card - A single slide of information in your stacj of cards
  * className (str): optional, provide a custom className for the Card (not held)
  * grabbedClassName (str): optional, provide a custom className for the Card (when held)
  * children (obj, arr): the children to be rendered inside the Card
@@ -116,4 +116,4 @@ ReactDOM.render(<App />, document.getElementById('app'));
 ```
 
 ## Planned Features
- * animation hook: a function passed to Card that will be passed x,y position of the mouse at the same throttled rate as animations. This can be sued for external animations and dom updates
+ * animation hook: a function passed to Card that will be passed x,y position of the mouse at the same throttled rate as animations. This can be used for external animations and dom updates
