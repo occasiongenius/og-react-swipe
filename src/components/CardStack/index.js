@@ -46,7 +46,7 @@ class CardStack extends Component {
 				right_limit: this.props.rightLimit ?
 					rect.right + this.props.rightLimit :
 						this.props.limit ? rect.right + this.props.limit : undefined,
-				bottom_limit: this.props.bottonLimit ?
+				bottom_limit: this.props.bottomLimit ?
 					rect.bottom + this.props.bottomLimit :
 						this.props.limit ? rect.bottom + this.props.limit : undefined,
 				left_limit: this.props.leftLimit ?
