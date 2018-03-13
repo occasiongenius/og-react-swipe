@@ -99,10 +99,13 @@ class Card extends Component {
 	}
 
 	grab(e) {
+		// do not grab if the target is a link or button
 		if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+			// get difference between mouse x/y and Card left/top position
 			let left_diff = e.x - this.state.start_left;
 			let top_diff = e.y - this.state.start_top;
 
+			// store the difference, and set grabbed flag to show grabbed element
 			this.setState({ 
 				grabbed: true,
 				left_diff,
@@ -125,14 +128,15 @@ class Card extends Component {
 			y: e.touches[0].clientY,
 		};
 
+		// get difference between mouse x/y and top/left of Card
 		let left_diff = coords.x - this.state.start_left;
 		let top_diff = coords.y - this.state.start_top;
 
+		// store the difference, and set grabbed flag to show grabbed element
 		this.setState({
 			grabbed: true,
 			left_diff,
 			top_diff,
-			first_grab: coords,
 		}, () => {
 			this.props.showNext();
 			this.setGrabbedPos(coords.x, coords.y);
@@ -143,6 +147,7 @@ class Card extends Component {
 	}
 
 	drop(e) {
+		// get whole number from style.left and style.top
 		if (/(-?\d+).*px/.test(this.grabbed.style.left) 
 			&& /(-?\d+).*px/.test(this.grabbed.style.top)) {
 			let x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
@@ -151,6 +156,8 @@ class Card extends Component {
 			this.fireDroppedEvents(parseInt(x), parseInt(y));
 		}
 
+		// remove grabbed flag, so that grabbed Card is no longer shown
+		// remove nullify_click flag so that next Card could be clicked
 		this.setState({ 
 			grabbed: false,
 			nullify_click: false,
@@ -161,6 +168,7 @@ class Card extends Component {
 	}
 
 	dropTouch(e) {
+		// get whole number from style.left and style.top
 		if (/(-?\d+).*px/.test(this.grabbed.style.left) 
 			&& /(-?\d+).*px/.test(this.grabbed.style.top)) {
 			let x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
@@ -169,6 +177,8 @@ class Card extends Component {
 			this.fireDroppedEvents(parseInt(x), parseInt(y));
 		}
 
+		// remove grabbed flag, so that grabbed Card is no longer shown
+		// remove nullify_click flag so that next Card could be clicked
 		this.setState({ 
 			grabbed: false,
 			nullify_click: false,
@@ -190,9 +200,11 @@ class Card extends Component {
 	}
 
 	setGrabbedPos(x, y) {
+		// calculate top/left of Card based on difference between mouse x/y and top/left of Card
 		let left_move = x - this.state.start_left - this.state.left_diff;
 		let top_move = y - this.state.start_top - this.state.top_diff;
 
+		// if there is a directional limit, do not move past that limit
 		if (this.props.bottom_limit && (top_move > this.props.bottom_limit - this.state.start_bottom))
 			top_move = this.props.bottom_limit - this.state.start_bottom;
 		else if (this.props.top_limit && (this.state.start_top + top_move < this.props.top_limit))
@@ -215,6 +227,8 @@ class Card extends Component {
 		this.animate(left_move, top_move);
 	}
 
+	// check which direction it was dragged the furthest, and fire the corresponding 
+	// directional prop function
 	fireDroppedEvents(x, y) {
 		let direction = null;
 		let amount = 0;
@@ -265,6 +279,7 @@ class Card extends Component {
 		if (this.props.animationHook) this.props.animationHook(0, 0);
 	}
 
+	// set the size/position of the Card for use in later functions
 	setStateSize() {
 		if (typeof document !== 'undefined') {
 			let rect = this.container.getBoundingClientRect();
@@ -289,6 +304,7 @@ class Card extends Component {
 		}
 	}
 
+	// if there is an animate Map, run all passed animation functions and update styles
 	animate(x, y) {
 		if (this.state.animate) {
 			if (!this.grabbed) return;
