@@ -16,16 +16,25 @@ class Card extends Component {
 		this.setGrabbedPos = this.setGrabbedPos.bind(this);
 
 		this.state = {
-			start_top: undefined,
-			start_left: undefined,
+			// position of card (used to calculate move distance)
+			start_top: undefined, 
+			start_left: undefined, 
+			// is the card grabbed? used for class assignment in render
+			// to "create" the dragged card and hide the other card
 			grabbed: false,
+			// flag used when movement doesn't go past this.props.click_bound,
+			// so that click event is not fired
 			nullify_click: false,
+			// difference in position between mouse and grabbed card,
+			// used to calculate 'left' and 'top' attributes on grabbed card
 			left_diff: 0,
 			top_diff: 0,
+			// set props in state to not change
 			animate: this.props.animate instanceof Map ? this.props.animate : undefined,
 			animate_throttle: this.props.animateThrottle ? this.props.animateThrottle : 50,
 		};
 
+		// validate 'animate' prop and throttle animate function
 		if (this.props.animate) {
 			if (!(this.props.animate instanceof Map)) {
 				console.error('animate prop on Card should by of type \'Map\'');
@@ -39,14 +48,17 @@ class Card extends Component {
 	}
 
 	componentDidMount() {
+		// get starting position of the card
 		if (this.props.visible) this.setStateSize();
 	}
 
 	componentDidUpdate(prevProps) {
+		// get starting position of the card
 		if (!prevProps.visible && this.props.visible) this.setStateSize();
 	}
 
 	componentWillUnmount() {
+		// remove event listeners and any other cleanup on card when it is dropped
 		if (typeof document !== 'undefined') {
 			if (this.container) {
 				this.container.removeEventListener('touchstart', this.grabTouch);
@@ -200,8 +212,7 @@ class Card extends Component {
 			&& (left_move > this.props.click_bound || top_move > this.props.click_bound))
 			this.setState({ nullify_click: true });
 
-		if (this.state.animate)
-			this.animate(left_move, top_move);
+		this.animate(left_move, top_move);
 	}
 
 	fireDroppedEvents(x, y) {
@@ -249,6 +260,9 @@ class Card extends Component {
 				this.props.revert();
 				break;
 		}
+
+		// revert any outside animations to (0, 0) position
+		if (this.props.animationHook) this.props.animationHook(0, 0);
 	}
 
 	setStateSize() {
@@ -276,14 +290,19 @@ class Card extends Component {
 	}
 
 	animate(x, y) {
-		if (!this.grabbed) return;
+		if (this.state.animate) {
+			if (!this.grabbed) return;
 
-		for (let animation of this.state.animate) {
-			if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
-				this.grabbed.style[animation[0]] = animation[1](x, y);
-			} else
-				console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
+			for (let animation of this.state.animate) {
+				if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+					this.grabbed.style[animation[0]] = animation[1](x, y);
+				} else
+					console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
+			}
 		}
+
+		if (this.props.animationHook) 
+			this.props.animationHook(x, y);
 	}
 }
 

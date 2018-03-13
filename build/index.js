@@ -995,7 +995,8 @@ var CardStack = function (_Component) {
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
 			onLeft: _this.props.onLeft ? _this.onLeft : undefined,
 			onClick: _this.props.onClick ? _this.onClick : undefined,
-			currently_viewed: _this.props.start_index || 0
+			currently_viewed: _this.props.start_index || 0,
+			animationHook: _this.props.animationHook ? _this.props.animationHook : undefined
 		};
 
 		_this.refs = {};
@@ -1043,7 +1044,8 @@ var CardStack = function (_Component) {
 				top_limit: this.state.top_limit,
 				right_limit: this.state.right_limit,
 				bottom_limit: this.state.bottom_limit,
-				left_limit: this.state.left_limit
+				left_limit: this.state.left_limit,
+				animationHook: this.state.animationHook
 			};
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
@@ -1202,16 +1204,25 @@ var Card = function (_Component) {
 		_this.setGrabbedPos = _this.setGrabbedPos.bind(_this);
 
 		_this.state = {
+			// position of card (used to calculate move distance)
 			start_top: undefined,
 			start_left: undefined,
+			// is the card grabbed? used for class assignment in render
+			// to "create" the dragged card and hide the other card
 			grabbed: false,
+			// flag used when movement doesn't go past this.props.click_bound,
+			// so that click event is not fired
 			nullify_click: false,
+			// difference in position between mouse and grabbed card,
+			// used to calculate 'left' and 'top' attributes on grabbed card
 			left_diff: 0,
 			top_diff: 0,
+			// set props in state to not change
 			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
 			animate_throttle: _this.props.animateThrottle ? _this.props.animateThrottle : 50
 		};
 
+		// validate 'animate' prop and throttle animate function
 		if (_this.props.animate) {
 			if (!(_this.props.animate instanceof Map)) {
 				console.error('animate prop on Card should by of type \'Map\'');
@@ -1228,16 +1239,19 @@ var Card = function (_Component) {
 	_createClass(Card, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			// get starting position of the card
 			if (this.props.visible) this.setStateSize();
 		}
 	}, {
 		key: 'componentDidUpdate',
 		value: function componentDidUpdate(prevProps) {
+			// get starting position of the card
 			if (!prevProps.visible && this.props.visible) this.setStateSize();
 		}
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
+			// remove event listeners and any other cleanup on card when it is dropped
 			if (typeof document !== 'undefined') {
 				if (this.container) {
 					this.container.removeEventListener('touchstart', this.grabTouch);
@@ -1405,7 +1419,7 @@ var Card = function (_Component) {
 			// that click event is not fired on drop
 			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) this.setState({ nullify_click: true });
 
-			if (this.state.animate) this.animate(left_move, top_move);
+			this.animate(left_move, top_move);
 		}
 	}, {
 		key: 'fireDroppedEvents',
@@ -1453,6 +1467,9 @@ var Card = function (_Component) {
 					this.props.revert();
 					break;
 			}
+
+			// revert any outside animations to (0, 0) position
+			if (this.props.animationHook) this.props.animationHook(0, 0);
 		}
 	}, {
 		key: 'setStateSize',
@@ -1482,34 +1499,38 @@ var Card = function (_Component) {
 	}, {
 		key: 'animate',
 		value: function animate(x, y) {
-			if (!this.grabbed) return;
+			if (this.state.animate) {
+				if (!this.grabbed) return;
 
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
 
-			try {
-				for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var animation = _step.value;
-
-					if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
-						this.grabbed.style[animation[0]] = animation[1](x, y);
-					} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
 				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
+					for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var animation = _step.value;
+
+						if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+							this.grabbed.style[animation[0]] = animation[1](x, y);
+						} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
 					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
 				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
 					}
 				}
 			}
+
+			if (this.props.animationHook) this.props.animationHook(x, y);
 		}
 	}]);
 
