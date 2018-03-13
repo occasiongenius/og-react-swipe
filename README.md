@@ -30,6 +30,8 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
 
 The on[Direction] callback functions on the CardStack will receive a parameter of the data object on each Card, and a second parameter that is the number of pixels the card was dragged from its middle
 
+By default the card will not drag if a button or anchor is clicked and held.
+
 # Example Usage
 ```
 import React, { Component } from 'react';
@@ -126,3 +128,4 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
 ## Planned Features
  * animation hook: a function passed to Card that will be passed x,y position of the mouse at the same throttled rate as animations. This can be used for external animations and dom updates
+ * non-draggable elements: selectors for elements that should not drag, right now defaults to buttons and anchor tags
