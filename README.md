@@ -15,9 +15,9 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * onLeft (func): optional, function executed when a card is dragged to the left of the stack
  * onClick (func): optional, function execeuted when a card is grabbed, but not moved beyond clickBound
  * topLimit (int): optional, number of pixels a card is limited in movement to ont the top
- * rightLimit (int): options, number of pixels a card is limited in movement to on the right
- * bottomLimit (int): options, number of pixels a card is limited in movement to on the bottom
- * leftLimit (int): options, number of pixels a card is limited in movement to on the left
+ * rightLimit (int): optional, number of pixels a card is limited in movement to on the right
+ * bottomLimit (int): optional, number of pixels a card is limited in movement to on the bottom
+ * leftLimit (int): optional, number of pixels a card is limited in movement to on the left
 
 #### Card - A single slide of information in your stack of cards
  * className (str): optional, provide a custom className for the Card (not held)
@@ -27,6 +27,7 @@ og-react-swipe provides 2 ReactJS components that need to be used in conjunction
  * undraggable (bool): optional, make a card undraggable (great for end of stack)
  * animate (Map): optional, map of 'css attribute' => fn(x, y) where x and y are the position of the card relative to its starting position, and the return of fn is the value of the css attribute
  * animateThrottle (int): number of ms to throttle animation calls by (default 50ms)
+ * animationHook (func): optional, function to be called on each animation frame (limited to animateThrottle) it will receieve 2 parameters x and y position of the card relative to its starting position
 
 The on[Direction] callback functions on the CardStack will receive a parameter of the data object on each Card, and a second parameter that is the number of pixels the card was dragged from its middle
 
@@ -127,5 +128,4 @@ ReactDOM.render(<App />, document.getElementById('app'));
 ```
 
 ## Planned Features
- * animation hook: a function passed to Card that will be passed x,y position of the mouse at the same throttled rate as animations. This can be used for external animations and dom updates
  * non-draggable elements: selectors for elements that should not drag, right now defaults to buttons and anchor tags
