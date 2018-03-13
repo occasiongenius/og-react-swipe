@@ -87,20 +87,22 @@ class Card extends Component {
 	}
 
 	grab(e) {
-		let left_diff = e.x - this.state.start_left;
-		let top_diff = e.y - this.state.start_top;
+		if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+			let left_diff = e.x - this.state.start_left;
+			let top_diff = e.y - this.state.start_top;
 
-		this.setState({ 
-			grabbed: true,
-			left_diff,
-			top_diff,
-		}, () => {
-			this.props.showNext();
-			this.setGrabbedPos(e.x, e.y);
-		});
+			this.setState({ 
+				grabbed: true,
+				left_diff,
+				top_diff,
+			}, () => {
+				this.props.showNext();
+				this.setGrabbedPos(e.x, e.y);
+			});
 
-		document.addEventListener('mousemove', this.move);
-		document.addEventListener('mouseup', this.drop);
+			document.addEventListener('mousemove', this.move);
+			document.addEventListener('mouseup', this.drop);
+		}
 	}
 
 	grabTouch(e) {

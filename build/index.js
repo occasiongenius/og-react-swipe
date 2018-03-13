@@ -989,7 +989,7 @@ var CardStack = function (_Component) {
 			right_trigger: diff,
 			bottom_trigger: diff,
 			left_trigger: -diff,
-			click_bound: _this.props.click_bound ? _this.props.click_bound : 1,
+			click_bound: _this.props.clickBound ? _this.props.clickBound : 1,
 			onTop: _this.props.onTop ? _this.onTop : undefined,
 			onRight: _this.props.onRight ? _this.onRight : undefined,
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
@@ -1294,20 +1294,22 @@ var Card = function (_Component) {
 		value: function grab(e) {
 			var _this3 = this;
 
-			var left_diff = e.x - this.state.start_left;
-			var top_diff = e.y - this.state.start_top;
+			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+				var left_diff = e.x - this.state.start_left;
+				var top_diff = e.y - this.state.start_top;
 
-			this.setState({
-				grabbed: true,
-				left_diff: left_diff,
-				top_diff: top_diff
-			}, function () {
-				_this3.props.showNext();
-				_this3.setGrabbedPos(e.x, e.y);
-			});
+				this.setState({
+					grabbed: true,
+					left_diff: left_diff,
+					top_diff: top_diff
+				}, function () {
+					_this3.props.showNext();
+					_this3.setGrabbedPos(e.x, e.y);
+				});
 
-			document.addEventListener('mousemove', this.move);
-			document.addEventListener('mouseup', this.drop);
+				document.addEventListener('mousemove', this.move);
+				document.addEventListener('mouseup', this.drop);
+			}
 		}
 	}, {
 		key: 'grabTouch',
