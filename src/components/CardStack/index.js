@@ -34,24 +34,32 @@ class CardStack extends Component {
 	}
 
 	componentDidMount() {
-		if (this.container && (this.props.limit || this.props.topLimit
-			|| this.props.rightLimit || this.props.bottomLimit || this.props.leftLimit)) {
+		if (this.container 
+			&& (typeof this.props.limit !=='undefined' 
+			|| typeof this.props.topLimit !== 'undefined'
+			|| typeof this.props.rightLimit !== 'undefined' 
+			|| typeof this.props.bottomLimit !== 'undefined' 
+			|| typeof this.props.leftLimit !== 'undefined')) {
 			
 			let rect = this.container.getBoundingClientRect();
 
 			let new_state = {
-				top_limit: this.props.topLimit ?
+				top_limit: typeof this.props.topLimit !== 'undefined' ?
 					rect.top - this.props.topLimit :
-						this.props.limit ? rect.top - this.props.limit : undefined,
-				right_limit: this.props.rightLimit ?
+						typeof this.props.limit !== 'undefined' ? 
+							rect.top - this.props.limit : undefined,
+				right_limit: typeof this.props.rightLimit !== 'undefined' ?
 					rect.right + this.props.rightLimit :
-						this.props.limit ? rect.right + this.props.limit : undefined,
-				bottom_limit: this.props.bottomLimit ?
+						typeof this.props.limit !== 'undefined' ? 
+							rect.right + this.props.limit : undefined,
+				bottom_limit: typeof this.props.bottomLimit !== 'undefined' ?
 					rect.bottom + this.props.bottomLimit :
-						this.props.limit ? rect.bottom + this.props.limit : undefined,
-				left_limit: this.props.leftLimit ?
+						typeof this.props.limit !== 'undefined' ? 
+							rect.bottom + this.props.limit : undefined,
+				left_limit: typeof this.props.leftLimit !== 'undefined' ?
 					rect.left - this.props.leftLimit :
-						this.props.limit ? rect.left - this.props.limit : undefined,
+						typeof this.props.limit !== 'undefined' ? 
+							rect.left - this.props.limit : undefined,
 			};
 
 			this.setState(new_state);

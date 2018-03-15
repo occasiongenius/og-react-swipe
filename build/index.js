@@ -995,8 +995,7 @@ var CardStack = function (_Component) {
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
 			onLeft: _this.props.onLeft ? _this.onLeft : undefined,
 			onClick: _this.props.onClick ? _this.onClick : undefined,
-			currently_viewed: _this.props.start_index || 0,
-			animationHook: _this.props.animationHook ? _this.props.animationHook : undefined
+			currently_viewed: _this.props.start_index || 0
 		};
 
 		_this.refs = {};
@@ -1006,15 +1005,15 @@ var CardStack = function (_Component) {
 	_createClass(CardStack, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			if (this.container && (this.props.limit || this.props.topLimit || this.props.rightLimit || this.props.bottomLimit || this.props.leftLimit)) {
+			if (this.container && (typeof this.props.limit !== 'undefined' || typeof this.props.topLimit !== 'undefined' || typeof this.props.rightLimit !== 'undefined' || typeof this.props.bottomLimit !== 'undefined' || typeof this.props.leftLimit !== 'undefined')) {
 
 				var rect = this.container.getBoundingClientRect();
 
 				var new_state = {
-					top_limit: this.props.topLimit ? rect.top - this.props.topLimit : this.props.limit ? rect.top - this.props.limit : undefined,
-					right_limit: this.props.rightLimit ? rect.right + this.props.rightLimit : this.props.limit ? rect.right + this.props.limit : undefined,
-					bottom_limit: this.props.bottomLimit ? rect.bottom + this.props.bottomLimit : this.props.limit ? rect.bottom + this.props.limit : undefined,
-					left_limit: this.props.leftLimit ? rect.left - this.props.leftLimit : this.props.limit ? rect.left - this.props.limit : undefined
+					top_limit: typeof this.props.topLimit !== 'undefined' ? rect.top - this.props.topLimit : typeof this.props.limit !== 'undefined' ? rect.top - this.props.limit : undefined,
+					right_limit: typeof this.props.rightLimit !== 'undefined' ? rect.right + this.props.rightLimit : typeof this.props.limit !== 'undefined' ? rect.right + this.props.limit : undefined,
+					bottom_limit: typeof this.props.bottomLimit !== 'undefined' ? rect.bottom + this.props.bottomLimit : typeof this.props.limit !== 'undefined' ? rect.bottom + this.props.limit : undefined,
+					left_limit: typeof this.props.leftLimit !== 'undefined' ? rect.left - this.props.leftLimit : typeof this.props.limit !== 'undefined' ? rect.left - this.props.limit : undefined
 				};
 
 				this.setState(new_state);
@@ -1044,8 +1043,7 @@ var CardStack = function (_Component) {
 				top_limit: this.state.top_limit,
 				right_limit: this.state.right_limit,
 				bottom_limit: this.state.bottom_limit,
-				left_limit: this.state.left_limit,
-				animationHook: this.state.animationHook
+				left_limit: this.state.left_limit
 			};
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
@@ -1308,10 +1306,13 @@ var Card = function (_Component) {
 		value: function grab(e) {
 			var _this3 = this;
 
+			// do not grab if the target is a link or button
 			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+				// get difference between mouse x/y and Card left/top position
 				var left_diff = e.x - this.state.start_left;
 				var top_diff = e.y - this.state.start_top;
 
+				// store the difference, and set grabbed flag to show grabbed element
 				this.setState({
 					grabbed: true,
 					left_diff: left_diff,
@@ -1337,14 +1338,15 @@ var Card = function (_Component) {
 				y: e.touches[0].clientY
 			};
 
+			// get difference between mouse x/y and top/left of Card
 			var left_diff = coords.x - this.state.start_left;
 			var top_diff = coords.y - this.state.start_top;
 
+			// store the difference, and set grabbed flag to show grabbed element
 			this.setState({
 				grabbed: true,
 				left_diff: left_diff,
-				top_diff: top_diff,
-				first_grab: coords
+				top_diff: top_diff
 			}, function () {
 				_this4.props.showNext();
 				_this4.setGrabbedPos(coords.x, coords.y);
@@ -1356,6 +1358,7 @@ var Card = function (_Component) {
 	}, {
 		key: 'drop',
 		value: function drop(e) {
+			// get whole number from style.left and style.top
 			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
 				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
 				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
@@ -1363,6 +1366,8 @@ var Card = function (_Component) {
 				this.fireDroppedEvents(parseInt(x), parseInt(y));
 			}
 
+			// remove grabbed flag, so that grabbed Card is no longer shown
+			// remove nullify_click flag so that next Card could be clicked
 			this.setState({
 				grabbed: false,
 				nullify_click: false
@@ -1374,6 +1379,7 @@ var Card = function (_Component) {
 	}, {
 		key: 'dropTouch',
 		value: function dropTouch(e) {
+			// get whole number from style.left and style.top
 			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
 				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
 				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
@@ -1381,6 +1387,8 @@ var Card = function (_Component) {
 				this.fireDroppedEvents(parseInt(x), parseInt(y));
 			}
 
+			// remove grabbed flag, so that grabbed Card is no longer shown
+			// remove nullify_click flag so that next Card could be clicked
 			this.setState({
 				grabbed: false,
 				nullify_click: false
@@ -1405,9 +1413,11 @@ var Card = function (_Component) {
 	}, {
 		key: 'setGrabbedPos',
 		value: function setGrabbedPos(x, y) {
+			// calculate top/left of Card based on difference between mouse x/y and top/left of Card
 			var left_move = x - this.state.start_left - this.state.left_diff;
 			var top_move = y - this.state.start_top - this.state.top_diff;
 
+			// if there is a directional limit, do not move past that limit
 			if (this.props.bottom_limit && top_move > this.props.bottom_limit - this.state.start_bottom) top_move = this.props.bottom_limit - this.state.start_bottom;else if (this.props.top_limit && this.state.start_top + top_move < this.props.top_limit) top_move = this.props.top_limit - this.state.start_top;
 
 			if (this.props.right_limit && left_move > this.props.right_limit - this.state.start_right) left_move = this.props.right_limit - this.state.start_right;else if (this.props.left_limit && this.state.start_left + left_move < this.props.left_limit) left_move = this.props.left_limit - this.state.start_left;
@@ -1421,6 +1431,10 @@ var Card = function (_Component) {
 
 			this.animate(left_move, top_move);
 		}
+
+		// check which direction it was dragged the furthest, and fire the corresponding 
+		// directional prop function
+
 	}, {
 		key: 'fireDroppedEvents',
 		value: function fireDroppedEvents(x, y) {
@@ -1471,6 +1485,9 @@ var Card = function (_Component) {
 			// revert any outside animations to (0, 0) position
 			if (this.props.animationHook) this.props.animationHook(0, 0);
 		}
+
+		// set the size/position of the Card for use in later functions
+
 	}, {
 		key: 'setStateSize',
 		value: function setStateSize() {
@@ -1496,6 +1513,9 @@ var Card = function (_Component) {
 				this.setState(new_state);
 			}
 		}
+
+		// if there is an animate Map, run all passed animation functions and update styles
+
 	}, {
 		key: 'animate',
 		value: function animate(x, y) {
