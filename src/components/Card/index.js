@@ -91,6 +91,13 @@ class Card extends Component {
 				<div { ...card_props } ref={n => { this.placeholder = n; }}>
 					{ this.props.children }
 				</div>
+				{(this.state.grabbed && this.props.next_overlay) && 
+					<div className="og-next-overlay" 
+						style={{ 
+							backgroundColor: this.props.next_overlay,
+							height: this.state.height,
+						}} />
+				}
 				<div { ...grabbed_props } ref={n => { this.grabbed = n; }}>
 					{ this.props.children }
 				</div>

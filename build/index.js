@@ -995,7 +995,8 @@ var CardStack = function (_Component) {
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
 			onLeft: _this.props.onLeft ? _this.onLeft : undefined,
 			onClick: _this.props.onClick ? _this.onClick : undefined,
-			currently_viewed: _this.props.start_index || 0
+			currently_viewed: _this.props.start_index || 0,
+			next_overlay: _this.props.nextOverlay ? _this.props.nextOverlay : undefined
 		};
 
 		_this.refs = {};
@@ -1043,7 +1044,8 @@ var CardStack = function (_Component) {
 				top_limit: this.state.top_limit,
 				right_limit: this.state.right_limit,
 				bottom_limit: this.state.bottom_limit,
-				left_limit: this.state.left_limit
+				left_limit: this.state.left_limit,
+				next_overlay: this.state.next_overlay
 			};
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
@@ -1292,6 +1294,11 @@ var Card = function (_Component) {
 						} }),
 					this.props.children
 				),
+				this.state.grabbed && this.props.next_overlay && _react2.default.createElement('div', { className: 'og-next-overlay',
+					style: {
+						backgroundColor: this.props.next_overlay,
+						height: this.state.height
+					} }),
 				_react2.default.createElement(
 					'div',
 					_extends({}, grabbed_props, { ref: function ref(n) {

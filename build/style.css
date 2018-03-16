@@ -18,3 +18,9 @@
 .og-hidden {
 	display: none;
 }
+
+.og-next-overlay {
+	width: 100%;
+	position: absolute;
+	z-index: 1;
+}

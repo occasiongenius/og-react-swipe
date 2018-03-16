@@ -129,3 +129,4 @@ ReactDOM.render(<App />, document.getElementById('app'));
 
 ## Planned Features
  * non-draggable elements: selectors for elements that should not drag, right now defaults to buttons and anchor tags
+ * dropHook: function that hooks into the drop action, and will receieve a callback to delete the card

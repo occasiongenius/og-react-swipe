@@ -28,6 +28,7 @@ class CardStack extends Component {
 			onLeft: this.props.onLeft ? this.onLeft : undefined,
 			onClick: this.props.onClick ? this.onClick : undefined,
 			currently_viewed: this.props.start_index || 0,
+			next_overlay: this.props.nextOverlay ? this.props.nextOverlay : undefined,
 		};
 
 		this.refs = {};
@@ -87,6 +88,7 @@ class CardStack extends Component {
 			right_limit: this.state.right_limit,
 			bottom_limit: this.state.bottom_limit,
 			left_limit: this.state.left_limit,
+			next_overlay: this.state.next_overlay,
 		};
 
 		if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
