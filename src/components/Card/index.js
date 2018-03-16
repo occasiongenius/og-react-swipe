@@ -254,6 +254,9 @@ class Card extends Component {
 		if (this.props.onClick && !direction && !this.state.nullify_click)
 			direction = 'click';
 
+		// revert any outside animations to (0, 0) position
+		if (this.props.animationHook) this.props.animationHook(0, 0);
+
 		switch (direction) {
 			case 'top':
 				this.props.onTop(this.props.data, amount);
@@ -274,9 +277,6 @@ class Card extends Component {
 				this.props.revert();
 				break;
 		}
-
-		// revert any outside animations to (0, 0) position
-		if (this.props.animationHook) this.props.animationHook(0, 0);
 	}
 
 	// set the size/position of the Card for use in later functions
