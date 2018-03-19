@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Card from '../Card';
 
 import { throttle } from '../../utility.js';
 
@@ -30,6 +31,10 @@ class CardStack extends Component {
 			currently_viewed: this.props.viewIndex || 0,
 			next_overlay: this.props.nextOverlay ? this.props.nextOverlay : undefined,
 		};
+
+		let children = this.getSortedChildren(this.props.children);
+
+		this.state.cards = children.cards;
 
 		this.refs = {};
 	}
@@ -67,6 +72,15 @@ class CardStack extends Component {
 		}
 	}
 
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.children !== this.state.children) {
+			let children = this.getSortedChildren(nextProps.children);
+
+			// TODO: add interact buttons here
+			this.setState({ cards: children.cards });
+		}
+	}
+
 	render() {
 		let className = 'og-card-stack';
 		if (this.props.className) className += ' ' + this.props.className;
@@ -95,16 +109,16 @@ class CardStack extends Component {
 
 		let children = null;
 			
-		if (this.props.children && Array.isArray(this.props.children)) {
-			children = this.props.children.map((child, i) => {
-				if (this.state.currently_viewed == i 
+		if (this.state.cards && this.state.cards.length > 0) {
+			children = this.state.cards.map((child, i) => {
+				if (this.state.currently_viewed == i
 					|| (this.state.next_visible && this.state.currently_viewed + 1 == i)) {
 					let nested_child = null;
 
-					if (child.props && child.props.children) 
+					if (child.props && child.props.children)
 						nested_child = child.props.children;
 
-					let child_props = { 
+					let child_props = {
 						...child.props, 
 						...default_child_props,
 						visible: this.state.currently_viewed - 1 !== i,
@@ -113,28 +127,9 @@ class CardStack extends Component {
 					return React.cloneElement(child, child_props, nested_child);
 				}
 			});
-
-			if (children.length == 0) children = null;
-		} else if (this.props.children) {
-			let child_props = { 
-				...this.props.children.props, 
-				...default_child_props,
-				visible: 
-					this.state.currently_viewed == 0
-					? true : false,
-			};
-
-			let nested_child = null;
-
-			if (this.props.children.props && this.props.children.props.children)
-				nested_child = this.props.children.props.children;
-
-			children = React.cloneElement(
-				this.props.children, 
-				child_props, 
-				nested_child
-			);
 		}
+
+		// TODO: add interact buttons to children
 
 		let style = { ...this.props.style };
 
@@ -187,9 +182,33 @@ class CardStack extends Component {
 		let currently_viewed = this.state.currently_viewed + 1;
 
 		this.setState({ currently_viewed, next_visible: false }, () => {
-			if (this.props.onRunOut && currently_viewed >= this.props.children.length)
+			if (this.props.onRunOut && currently_viewed >= this.state.cards.length)
 				this.props.onRunOut();
 		});
+	}
+
+	// TODO: interact buttons
+	getSortedChildren(children) {
+		let flat_children = [];
+
+		// flatten children
+		for (let i = 0; i < children.length; i++) {
+			if (Array.isArray(children[i])) {
+				flat_children = flat_children.concat(children[i]);
+			} else {
+				flat_children.push(children[i]);
+			}
+		}
+
+		let cards = [];
+		let interact = [];
+
+		cards = flat_children.filter(child => child.type == Card);
+
+		return {
+			cards,
+			interact,
+		};
 	}
 }
 

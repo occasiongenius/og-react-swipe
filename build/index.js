@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -312,52 +312,408 @@ module.exports = emptyFunction;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-// Returns a function, that, when invoked, will only be triggered at most once
-// during a given window of time. Normally, the throttled function will run
-// as much as it can, without ever going more than once per `wait` duration;
-// but if you'd like to disable the execution on the leading edge, pass
-// `{leading: false}`. To disable execution on the trailing edge, ditto.
-var throttle = exports.throttle = function throttle(func, wait, options) {
-	var context, args, result;
-	var timeout = null;
-	var previous = 0;
 
-	if (!options) options = {};
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var later = function later() {
-		previous = options.leading === false ? 0 : Date.now();
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	return function () {
-		var now = Date.now();
+var _react = __webpack_require__(1);
 
-		if (!previous && options.leading === false) previous = now;
+var _react2 = _interopRequireDefault(_react);
 
-		var remaining = wait - (now - previous);
-		context = this;
-		args = arguments;
+var _reactDom = __webpack_require__(17);
 
-		if (remaining <= 0 || remaining > wait) {
+var _reactDom2 = _interopRequireDefault(_reactDom);
 
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
+var _utility = __webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Card = function (_Component) {
+	_inherits(Card, _Component);
+
+	function Card(props) {
+		_classCallCheck(this, Card);
+
+		var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+
+		_this.grab = _this.grab.bind(_this);
+		_this.grabTouch = _this.grabTouch.bind(_this);
+		_this.move = _this.move.bind(_this);
+		_this.moveTouch = _this.moveTouch.bind(_this);
+		_this.drop = _this.drop.bind(_this);
+		_this.dropTouch = _this.dropTouch.bind(_this);
+
+		_this.setGrabbedPos = _this.setGrabbedPos.bind(_this);
+
+		_this.state = {
+			// position of card (used to calculate move distance)
+			start_top: undefined,
+			start_left: undefined,
+			// is the card grabbed? used for class assignment in render
+			// to "create" the dragged card and hide the other card
+			grabbed: false,
+			// flag used when movement doesn't go past this.props.click_bound,
+			// so that click event is not fired
+			nullify_click: false,
+			// difference in position between mouse and grabbed card,
+			// used to calculate 'left' and 'top' attributes on grabbed card
+			left_diff: 0,
+			top_diff: 0,
+			// set props in state to not change
+			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
+			animate_throttle: _this.props.animateThrottle ? _this.props.animateThrottle : 50
+		};
+
+		// validate 'animate' prop and throttle animate function
+		if (_this.props.animate) {
+			if (!(_this.props.animate instanceof Map)) {
+				console.error('animate prop on Card should by of type \'Map\'');
+			} else if (_this.props.animate.size > 4) {
+				console.error('animate prop on Card should not be larger than 4 key/values.');
+			} else {
+				_this.state.animate = _this.props.animate;
+				_this.animate = (0, _utility.throttle)(_this.animate.bind(_this), _this.state.animate_throttle);
+			}
+		}
+		return _this;
+	}
+
+	_createClass(Card, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			// get starting position of the card
+			if (this.props.visible) this.setStateSize();
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate(prevProps) {
+			// get starting position of the card
+			if (!prevProps.visible && this.props.visible) this.setStateSize();
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			// remove event listeners and any other cleanup on card when it is dropped
+			if (typeof document !== 'undefined') {
+				if (this.container) {
+					this.container.removeEventListener('touchstart', this.grabTouch);
+					this.container.removeEventListener('mousedown', this.grab);
+				}
+			}
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var _this2 = this;
+
+			var card_props = { className: 'og-card' };
+			if (this.props.className) card_props.className += ' ' + this.props.className;
+			if (this.state.grabbed) card_props.className += ' og-hidden';
+
+			var grabbed_props = {
+				className: 'og-card-grabbed',
+				style: {
+					height: this.state.height,
+					width: this.state.width
+				}
+			};
+
+			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
+			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
+
+			var containerClassName = 'og-card-container';
+			if (!this.props.visible) containerClassName += ' og-hidden';
+
+			return _react2.default.createElement(
+				'div',
+				{ className: containerClassName, ref: function ref(n) {
+						_this2.container = n;
+					} },
+				_react2.default.createElement(
+					'div',
+					_extends({}, card_props, { ref: function ref(n) {
+							_this2.placeholder = n;
+						} }),
+					this.props.children
+				),
+				this.state.grabbed && this.props.next_overlay && _react2.default.createElement('div', { className: 'og-next-overlay',
+					style: {
+						backgroundColor: this.props.next_overlay,
+						height: this.state.height
+					} }),
+				_react2.default.createElement(
+					'div',
+					_extends({}, grabbed_props, { ref: function ref(n) {
+							_this2.grabbed = n;
+						} }),
+					this.props.children
+				)
+			);
+		}
+	}, {
+		key: 'grab',
+		value: function grab(e) {
+			var _this3 = this;
+
+			// do not grab if the target is a link or button
+			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+				// get difference between mouse x/y and Card left/top position
+				var left_diff = e.x - this.state.start_left;
+				var top_diff = e.y - this.state.start_top;
+
+				// store the difference, and set grabbed flag to show grabbed element
+				this.setState({
+					grabbed: true,
+					left_diff: left_diff,
+					top_diff: top_diff
+				}, function () {
+					_this3.props.showNext();
+					_this3.setGrabbedPos(e.x, e.y);
+				});
+
+				document.addEventListener('mousemove', this.move);
+				document.addEventListener('mouseup', this.drop);
+			}
+		}
+	}, {
+		key: 'grabTouch',
+		value: function grabTouch(e) {
+			var _this4 = this;
+
+			e.preventDefault();
+
+			var coords = {
+				x: e.touches[0].clientX,
+				y: e.touches[0].clientY
+			};
+
+			// get difference between mouse x/y and top/left of Card
+			var left_diff = coords.x - this.state.start_left;
+			var top_diff = coords.y - this.state.start_top;
+
+			// store the difference, and set grabbed flag to show grabbed element
+			this.setState({
+				grabbed: true,
+				left_diff: left_diff,
+				top_diff: top_diff
+			}, function () {
+				_this4.props.showNext();
+				_this4.setGrabbedPos(coords.x, coords.y);
+			});
+
+			document.addEventListener('touchmove', this.moveTouch);
+			document.addEventListener('touchend', this.dropTouch);
+		}
+	}, {
+		key: 'drop',
+		value: function drop(e) {
+			// get whole number from style.left and style.top
+			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
+				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
+				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
+
+				this.fireDroppedEvents(parseInt(x), parseInt(y));
 			}
 
-			previous = now;
-			result = func.apply(context, args);
+			// remove grabbed flag, so that grabbed Card is no longer shown
+			// remove nullify_click flag so that next Card could be clicked
+			this.setState({
+				grabbed: false,
+				nullify_click: false
+			});
 
-			if (!timeout) context = args = null;
-		} else if (!timeout && options.trailing !== false) {
-			timeout = setTimeout(later, remaining);
+			document.removeEventListener('mousemove', this.move);
+			document.removeEventListener('mouseup', this.drop);
+		}
+	}, {
+		key: 'dropTouch',
+		value: function dropTouch(e) {
+			// get whole number from style.left and style.top
+			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
+				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
+				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
+
+				this.fireDroppedEvents(parseInt(x), parseInt(y));
+			}
+
+			// remove grabbed flag, so that grabbed Card is no longer shown
+			// remove nullify_click flag so that next Card could be clicked
+			this.setState({
+				grabbed: false,
+				nullify_click: false
+			});
+
+			document.removeEventListener('touchmove', this.moveTouch);
+			document.removeEventListener('touchend', this.dropTouch);
+		}
+	}, {
+		key: 'move',
+		value: function move(e) {
+			this.setGrabbedPos(e.x, e.y);
+		}
+	}, {
+		key: 'moveTouch',
+		value: function moveTouch(e) {
+			var x = e.touches[0].clientX;
+			var y = e.touches[0].clientY;
+
+			this.setGrabbedPos(x, y);
+		}
+	}, {
+		key: 'setGrabbedPos',
+		value: function setGrabbedPos(x, y) {
+			// calculate top/left of Card based on difference between mouse x/y and top/left of Card
+			var left_move = x - this.state.start_left - this.state.left_diff;
+			var top_move = y - this.state.start_top - this.state.top_diff;
+
+			// if there is a directional limit, do not move past that limit
+			if (this.props.bottom_limit && top_move > this.props.bottom_limit - this.state.start_bottom) top_move = this.props.bottom_limit - this.state.start_bottom;else if (this.props.top_limit && this.state.start_top + top_move < this.props.top_limit) top_move = this.props.top_limit - this.state.start_top;
+
+			if (this.props.right_limit && left_move > this.props.right_limit - this.state.start_right) left_move = this.props.right_limit - this.state.start_right;else if (this.props.left_limit && this.state.start_left + left_move < this.props.left_limit) left_move = this.props.left_limit - this.state.start_left;
+
+			this.grabbed.style.left = left_move + 'px';
+			this.grabbed.style.top = top_move + 'px';
+
+			// is this a click? if so, set nullify click so
+			// that click event is not fired on drop
+			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) this.setState({ nullify_click: true });
+
+			this.animate(left_move, top_move);
 		}
 
-		return result;
-	};
-};
+		// check which direction it was dragged the furthest, and fire the corresponding 
+		// directional prop function
+
+	}, {
+		key: 'fireDroppedEvents',
+		value: function fireDroppedEvents(x, y) {
+			var direction = null;
+			var amount = 0;
+
+			var abs = Math.abs;
+
+			if (this.props.onRight && x > this.props.right_trigger && x > amount) {
+				direction = 'right';
+				amount = x;
+			} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
+				direction = 'left';
+				amount = abs(x);
+			}
+
+			if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
+				direction = 'bottom';
+				amount = y;
+			} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
+				direction = 'top';
+				amount = abs(y);
+			}
+
+			if (this.props.onClick && !direction && !this.state.nullify_click) direction = 'click';
+
+			// revert any outside animations to (0, 0) position
+			if (this.props.animationHook) this.props.animationHook(0, 0);
+
+			switch (direction) {
+				case 'top':
+					this.props.onTop(this.props.data, amount);
+					break;
+				case 'right':
+					this.props.onRight(this.props.data, amount);
+					break;
+				case 'bottom':
+					this.props.onBottom(this.props.data, amount);
+					break;
+				case 'left':
+					this.props.onLeft(this.props.data, amount);
+					break;
+				case 'click':
+					this.props.onClick(this.props.data);
+					break;
+				default:
+					this.props.revert();
+					break;
+			}
+		}
+
+		// set the size/position of the Card for use in later functions
+
+	}, {
+		key: 'setStateSize',
+		value: function setStateSize() {
+			if (typeof document !== 'undefined') {
+				var rect = this.container.getBoundingClientRect();
+
+				var new_state = {
+					start_top: rect.top,
+					start_right: rect.right,
+					start_bottom: rect.bottom,
+					start_left: rect.left,
+					width: this.placeholder.clientWidth,
+					height: this.placeholder.clientHeight
+				};
+
+				var elem = this.container;
+
+				if (!this.props.undraggable) {
+					elem.addEventListener('touchstart', this.grabTouch);
+					elem.addEventListener('mousedown', this.grab);
+				}
+
+				this.setState(new_state);
+			}
+		}
+
+		// if there is an animate Map, run all passed animation functions and update styles
+
+	}, {
+		key: 'animate',
+		value: function animate(x, y) {
+			if (this.state.animate) {
+				if (!this.grabbed) return;
+
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var animation = _step.value;
+
+						if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
+							this.grabbed.style[animation[0]] = animation[1](x, y);
+						} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
+					}
+				}
+			}
+
+			if (this.props.animationHook) this.props.animationHook(x, y);
+		}
+	}]);
+
+	return Card;
+}(_react.Component);
+
+exports.default = Card;
 
 /***/ }),
 /* 4 */
@@ -922,11 +1278,68 @@ module.exports = warning;
 "use strict";
 
 
-var _CardStack = __webpack_require__(15);
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+var throttle = exports.throttle = function throttle(func, wait, options) {
+	var context, args, result;
+	var timeout = null;
+	var previous = 0;
+
+	if (!options) options = {};
+
+	var later = function later() {
+		previous = options.leading === false ? 0 : Date.now();
+		timeout = null;
+		result = func.apply(context, args);
+		if (!timeout) context = args = null;
+	};
+
+	return function () {
+		var now = Date.now();
+
+		if (!previous && options.leading === false) previous = now;
+
+		var remaining = wait - (now - previous);
+		context = this;
+		args = arguments;
+
+		if (remaining <= 0 || remaining > wait) {
+
+			if (timeout) {
+				clearTimeout(timeout);
+				timeout = null;
+			}
+
+			previous = now;
+			result = func.apply(context, args);
+
+			if (!timeout) context = args = null;
+		} else if (!timeout && options.trailing !== false) {
+			timeout = setTimeout(later, remaining);
+		}
+
+		return result;
+	};
+};
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _CardStack = __webpack_require__(16);
 
 var _CardStack2 = _interopRequireDefault(_CardStack);
 
-var _Card = __webpack_require__(16);
+var _Card = __webpack_require__(3);
 
 var _Card2 = _interopRequireDefault(_Card);
 
@@ -938,7 +1351,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -956,7 +1369,11 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _utility = __webpack_require__(3);
+var _Card = __webpack_require__(3);
+
+var _Card2 = _interopRequireDefault(_Card);
+
+var _utility = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -999,6 +1416,10 @@ var CardStack = function (_Component) {
 			next_overlay: _this.props.nextOverlay ? _this.props.nextOverlay : undefined
 		};
 
+		var children = _this.getSortedChildren(_this.props.children);
+
+		_this.state.cards = children.cards;
+
 		_this.refs = {};
 		return _this;
 	}
@@ -1018,6 +1439,16 @@ var CardStack = function (_Component) {
 				};
 
 				this.setState(new_state);
+			}
+		}
+	}, {
+		key: 'componentWillReceiveProps',
+		value: function componentWillReceiveProps(nextProps) {
+			if (nextProps.children !== this.state.children) {
+				var children = this.getSortedChildren(nextProps.children);
+
+				// TODO: add interact buttons here
+				this.setState({ cards: children.cards });
 			}
 		}
 	}, {
@@ -1052,8 +1483,8 @@ var CardStack = function (_Component) {
 
 			var children = null;
 
-			if (this.props.children && Array.isArray(this.props.children)) {
-				children = this.props.children.map(function (child, i) {
+			if (this.state.cards && this.state.cards.length > 0) {
+				children = this.state.cards.map(function (child, i) {
 					if (_this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i) {
 						var nested_child = null;
 
@@ -1066,19 +1497,9 @@ var CardStack = function (_Component) {
 						return _react2.default.cloneElement(child, child_props, nested_child);
 					}
 				});
-
-				if (children.length == 0) children = null;
-			} else if (this.props.children) {
-				var child_props = _extends({}, this.props.children.props, default_child_props, {
-					visible: this.state.currently_viewed == 0 ? true : false
-				});
-
-				var nested_child = null;
-
-				if (this.props.children.props && this.props.children.props.children) nested_child = this.props.children.props.children;
-
-				children = _react2.default.cloneElement(this.props.children, child_props, nested_child);
 			}
+
+			// TODO: add interact buttons to children
 
 			var style = _extends({}, this.props.style);
 
@@ -1143,8 +1564,37 @@ var CardStack = function (_Component) {
 			var currently_viewed = this.state.currently_viewed + 1;
 
 			this.setState({ currently_viewed: currently_viewed, next_visible: false }, function () {
-				if (_this3.props.onRunOut && currently_viewed >= _this3.props.children.length) _this3.props.onRunOut();
+				if (_this3.props.onRunOut && currently_viewed >= _this3.state.cards.length) _this3.props.onRunOut();
 			});
+		}
+
+		// TODO: interact buttons
+
+	}, {
+		key: 'getSortedChildren',
+		value: function getSortedChildren(children) {
+			var flat_children = [];
+
+			// flatten children
+			for (var i = 0; i < children.length; i++) {
+				if (Array.isArray(children[i])) {
+					flat_children = flat_children.concat(children[i]);
+				} else {
+					flat_children.push(children[i]);
+				}
+			}
+
+			var cards = [];
+			var interact = [];
+
+			cards = flat_children.filter(function (child) {
+				return child.type == _Card2.default;
+			});
+
+			return {
+				cards: cards,
+				interact: interact
+			};
 		}
 	}]);
 
@@ -1152,419 +1602,6 @@ var CardStack = function (_Component) {
 }(_react.Component);
 
 exports.default = CardStack;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = __webpack_require__(17);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _utility = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Card = function (_Component) {
-	_inherits(Card, _Component);
-
-	function Card(props) {
-		_classCallCheck(this, Card);
-
-		var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
-
-		_this.grab = _this.grab.bind(_this);
-		_this.grabTouch = _this.grabTouch.bind(_this);
-		_this.move = _this.move.bind(_this);
-		_this.moveTouch = _this.moveTouch.bind(_this);
-		_this.drop = _this.drop.bind(_this);
-		_this.dropTouch = _this.dropTouch.bind(_this);
-
-		_this.setGrabbedPos = _this.setGrabbedPos.bind(_this);
-
-		_this.state = {
-			// position of card (used to calculate move distance)
-			start_top: undefined,
-			start_left: undefined,
-			// is the card grabbed? used for class assignment in render
-			// to "create" the dragged card and hide the other card
-			grabbed: false,
-			// flag used when movement doesn't go past this.props.click_bound,
-			// so that click event is not fired
-			nullify_click: false,
-			// difference in position between mouse and grabbed card,
-			// used to calculate 'left' and 'top' attributes on grabbed card
-			left_diff: 0,
-			top_diff: 0,
-			// set props in state to not change
-			animate: _this.props.animate instanceof Map ? _this.props.animate : undefined,
-			animate_throttle: _this.props.animateThrottle ? _this.props.animateThrottle : 50
-		};
-
-		// validate 'animate' prop and throttle animate function
-		if (_this.props.animate) {
-			if (!(_this.props.animate instanceof Map)) {
-				console.error('animate prop on Card should by of type \'Map\'');
-			} else if (_this.props.animate.size > 4) {
-				console.error('animate prop on Card should not be larger than 4 key/values.');
-			} else {
-				_this.state.animate = _this.props.animate;
-				_this.animate = (0, _utility.throttle)(_this.animate.bind(_this), _this.state.animate_throttle);
-			}
-		}
-		return _this;
-	}
-
-	_createClass(Card, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			// get starting position of the card
-			if (this.props.visible) this.setStateSize();
-		}
-	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate(prevProps) {
-			// get starting position of the card
-			if (!prevProps.visible && this.props.visible) this.setStateSize();
-		}
-	}, {
-		key: 'componentWillUnmount',
-		value: function componentWillUnmount() {
-			// remove event listeners and any other cleanup on card when it is dropped
-			if (typeof document !== 'undefined') {
-				if (this.container) {
-					this.container.removeEventListener('touchstart', this.grabTouch);
-					this.container.removeEventListener('mousedown', this.grab);
-				}
-			}
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var _this2 = this;
-
-			var card_props = { className: 'og-card' };
-			if (this.props.className) card_props.className += ' ' + this.props.className;
-			if (this.state.grabbed) card_props.className += ' og-hidden';
-
-			var grabbed_props = {
-				className: 'og-card-grabbed',
-				style: {
-					height: this.state.height,
-					width: this.state.width
-				}
-			};
-
-			if (this.props.grabbedClassName) grabbed_props.className += ' ' + this.props.grabbedClassName;
-			if (!this.state.grabbed) grabbed_props.className += ' og-hidden';
-
-			var containerClassName = 'og-card-container';
-			if (!this.props.visible) containerClassName += ' og-hidden';
-
-			return _react2.default.createElement(
-				'div',
-				{ className: containerClassName, ref: function ref(n) {
-						_this2.container = n;
-					} },
-				_react2.default.createElement(
-					'div',
-					_extends({}, card_props, { ref: function ref(n) {
-							_this2.placeholder = n;
-						} }),
-					this.props.children
-				),
-				this.state.grabbed && this.props.next_overlay && _react2.default.createElement('div', { className: 'og-next-overlay',
-					style: {
-						backgroundColor: this.props.next_overlay,
-						height: this.state.height
-					} }),
-				_react2.default.createElement(
-					'div',
-					_extends({}, grabbed_props, { ref: function ref(n) {
-							_this2.grabbed = n;
-						} }),
-					this.props.children
-				)
-			);
-		}
-	}, {
-		key: 'grab',
-		value: function grab(e) {
-			var _this3 = this;
-
-			// do not grab if the target is a link or button
-			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
-				// get difference between mouse x/y and Card left/top position
-				var left_diff = e.x - this.state.start_left;
-				var top_diff = e.y - this.state.start_top;
-
-				// store the difference, and set grabbed flag to show grabbed element
-				this.setState({
-					grabbed: true,
-					left_diff: left_diff,
-					top_diff: top_diff
-				}, function () {
-					_this3.props.showNext();
-					_this3.setGrabbedPos(e.x, e.y);
-				});
-
-				document.addEventListener('mousemove', this.move);
-				document.addEventListener('mouseup', this.drop);
-			}
-		}
-	}, {
-		key: 'grabTouch',
-		value: function grabTouch(e) {
-			var _this4 = this;
-
-			e.preventDefault();
-
-			var coords = {
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY
-			};
-
-			// get difference between mouse x/y and top/left of Card
-			var left_diff = coords.x - this.state.start_left;
-			var top_diff = coords.y - this.state.start_top;
-
-			// store the difference, and set grabbed flag to show grabbed element
-			this.setState({
-				grabbed: true,
-				left_diff: left_diff,
-				top_diff: top_diff
-			}, function () {
-				_this4.props.showNext();
-				_this4.setGrabbedPos(coords.x, coords.y);
-			});
-
-			document.addEventListener('touchmove', this.moveTouch);
-			document.addEventListener('touchend', this.dropTouch);
-		}
-	}, {
-		key: 'drop',
-		value: function drop(e) {
-			// get whole number from style.left and style.top
-			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
-				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
-				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
-
-				this.fireDroppedEvents(parseInt(x), parseInt(y));
-			}
-
-			// remove grabbed flag, so that grabbed Card is no longer shown
-			// remove nullify_click flag so that next Card could be clicked
-			this.setState({
-				grabbed: false,
-				nullify_click: false
-			});
-
-			document.removeEventListener('mousemove', this.move);
-			document.removeEventListener('mouseup', this.drop);
-		}
-	}, {
-		key: 'dropTouch',
-		value: function dropTouch(e) {
-			// get whole number from style.left and style.top
-			if (/(-?\d+).*px/.test(this.grabbed.style.left) && /(-?\d+).*px/.test(this.grabbed.style.top)) {
-				var x = /(-?\d+).*px/.exec(this.grabbed.style.left)[1];
-				var y = /(-?\d+).*px/.exec(this.grabbed.style.top)[1];
-
-				this.fireDroppedEvents(parseInt(x), parseInt(y));
-			}
-
-			// remove grabbed flag, so that grabbed Card is no longer shown
-			// remove nullify_click flag so that next Card could be clicked
-			this.setState({
-				grabbed: false,
-				nullify_click: false
-			});
-
-			document.removeEventListener('touchmove', this.moveTouch);
-			document.removeEventListener('touchend', this.dropTouch);
-		}
-	}, {
-		key: 'move',
-		value: function move(e) {
-			this.setGrabbedPos(e.x, e.y);
-		}
-	}, {
-		key: 'moveTouch',
-		value: function moveTouch(e) {
-			var x = e.touches[0].clientX;
-			var y = e.touches[0].clientY;
-
-			this.setGrabbedPos(x, y);
-		}
-	}, {
-		key: 'setGrabbedPos',
-		value: function setGrabbedPos(x, y) {
-			// calculate top/left of Card based on difference between mouse x/y and top/left of Card
-			var left_move = x - this.state.start_left - this.state.left_diff;
-			var top_move = y - this.state.start_top - this.state.top_diff;
-
-			// if there is a directional limit, do not move past that limit
-			if (this.props.bottom_limit && top_move > this.props.bottom_limit - this.state.start_bottom) top_move = this.props.bottom_limit - this.state.start_bottom;else if (this.props.top_limit && this.state.start_top + top_move < this.props.top_limit) top_move = this.props.top_limit - this.state.start_top;
-
-			if (this.props.right_limit && left_move > this.props.right_limit - this.state.start_right) left_move = this.props.right_limit - this.state.start_right;else if (this.props.left_limit && this.state.start_left + left_move < this.props.left_limit) left_move = this.props.left_limit - this.state.start_left;
-
-			this.grabbed.style.left = left_move + 'px';
-			this.grabbed.style.top = top_move + 'px';
-
-			// is this a click? if so, set nullify click so
-			// that click event is not fired on drop
-			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) this.setState({ nullify_click: true });
-
-			this.animate(left_move, top_move);
-		}
-
-		// check which direction it was dragged the furthest, and fire the corresponding 
-		// directional prop function
-
-	}, {
-		key: 'fireDroppedEvents',
-		value: function fireDroppedEvents(x, y) {
-			var direction = null;
-			var amount = 0;
-
-			var abs = Math.abs;
-
-			if (this.props.onRight && x > this.props.right_trigger && x > amount) {
-				direction = 'right';
-				amount = x;
-			} else if (this.props.onLeft && x < this.props.left_trigger && abs(x) > amount) {
-				direction = 'left';
-				amount = abs(x);
-			}
-
-			if (this.props.onBottom && y > this.props.bottom_trigger && y > amount) {
-				direction = 'bottom';
-				amount = y;
-			} else if (this.props.onTop && y < this.props.top_trigger && abs(y) > amount) {
-				direction = 'top';
-				amount = abs(y);
-			}
-
-			if (this.props.onClick && !direction && !this.state.nullify_click) direction = 'click';
-
-			// revert any outside animations to (0, 0) position
-			if (this.props.animationHook) this.props.animationHook(0, 0);
-
-			switch (direction) {
-				case 'top':
-					this.props.onTop(this.props.data, amount);
-					break;
-				case 'right':
-					this.props.onRight(this.props.data, amount);
-					break;
-				case 'bottom':
-					this.props.onBottom(this.props.data, amount);
-					break;
-				case 'left':
-					this.props.onLeft(this.props.data, amount);
-					break;
-				case 'click':
-					this.props.onClick(this.props.data);
-					break;
-				default:
-					this.props.revert();
-					break;
-			}
-		}
-
-		// set the size/position of the Card for use in later functions
-
-	}, {
-		key: 'setStateSize',
-		value: function setStateSize() {
-			if (typeof document !== 'undefined') {
-				var rect = this.container.getBoundingClientRect();
-
-				var new_state = {
-					start_top: rect.top,
-					start_right: rect.right,
-					start_bottom: rect.bottom,
-					start_left: rect.left,
-					width: this.placeholder.clientWidth,
-					height: this.placeholder.clientHeight
-				};
-
-				var elem = this.container;
-
-				if (!this.props.undraggable) {
-					elem.addEventListener('touchstart', this.grabTouch);
-					elem.addEventListener('mousedown', this.grab);
-				}
-
-				this.setState(new_state);
-			}
-		}
-
-		// if there is an animate Map, run all passed animation functions and update styles
-
-	}, {
-		key: 'animate',
-		value: function animate(x, y) {
-			if (this.state.animate) {
-				if (!this.grabbed) return;
-
-				var _iteratorNormalCompletion = true;
-				var _didIteratorError = false;
-				var _iteratorError = undefined;
-
-				try {
-					for (var _iterator = this.state.animate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-						var animation = _step.value;
-
-						if (typeof this.grabbed.style[animation[0]] !== 'undefined') {
-							this.grabbed.style[animation[0]] = animation[1](x, y);
-						} else console.error(animation[0] + ' is not a css attribute. Check the animate prop of Card.');
-					}
-				} catch (err) {
-					_didIteratorError = true;
-					_iteratorError = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion && _iterator.return) {
-							_iterator.return();
-						}
-					} finally {
-						if (_didIteratorError) {
-							throw _iteratorError;
-						}
-					}
-				}
-			}
-
-			if (this.props.animationHook) this.props.animationHook(x, y);
-		}
-	}]);
-
-	return Card;
-}(_react.Component);
-
-exports.default = Card;
 
 /***/ }),
 /* 17 */
