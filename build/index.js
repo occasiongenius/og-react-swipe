@@ -1021,15 +1021,6 @@ var CardStack = function (_Component) {
 			}
 		}
 	}, {
-		key: 'componentWillReceiveProps',
-		value: function componentWillReceiveProps(nextProps) {
-			var new_state = {};
-
-			if (nextProps.viewIndex !== this.state.currently_viewed) new_state.currently_viewed = nextProps.viewIndex;
-
-			if (Object.keys(new_state).length > 0) this.setState(new_state);
-		}
-	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;

@@ -67,16 +67,6 @@ class CardStack extends Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
-		let new_state = {};
-
-		if (nextProps.viewIndex !== this.state.currently_viewed)
-			new_state.currently_viewed = nextProps.viewIndex;
-
-		if (Object.keys(new_state).length > 0)
-			this.setState(new_state);
-	}
-	
 	render() {
 		let className = 'og-card-stack';
 		if (this.props.className) className += ' ' + this.props.className;
