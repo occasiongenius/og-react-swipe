@@ -33,6 +33,11 @@ The on[Direction] callback functions on the CardStack will receive a parameter o
 
 By default the card will not drag if a button or anchor is clicked and held.
 
+#### CardButton - An unstyled button to take actions on the card, or to hook into the currently viewed card
+ * className (str): optional, provide a custom className for the CardButton
+ * style (obj): optional, provide custom in-line styling for the CardButton
+ * onClick (str/func): required, provide a hook for the click event. If strings: 'top', 'right', 'bottom', or 'left' are provided instead of a function, the corresponding callback on the CardStack will be called
+
 # Example Usage
 ```
 import React, { Component } from 'react';

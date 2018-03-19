@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Card from '../Card';
+import CardButton from '../CardButton';
 
 import { throttle } from '../../utility.js';
 
@@ -35,6 +36,7 @@ class CardStack extends Component {
 		let children = this.getSortedChildren(this.props.children);
 
 		this.state.cards = children.cards;
+		this.state.interact = children.interact;
 
 		this.refs = {};
 	}
@@ -76,8 +78,10 @@ class CardStack extends Component {
 		if (nextProps.children !== this.state.children) {
 			let children = this.getSortedChildren(nextProps.children);
 
-			// TODO: add interact buttons here
-			this.setState({ cards: children.cards });
+			this.setState({ 
+				cards: children.cards,
+				interact: children.interact,
+			});
 		}
 	}
 
@@ -107,10 +111,10 @@ class CardStack extends Component {
 
 		if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
 
-		let children = null;
+		let children = [];
 			
 		if (this.state.cards && this.state.cards.length > 0) {
-			children = this.state.cards.map((child, i) => {
+			let cards = this.state.cards.map((child, i) => {
 				if (this.state.currently_viewed == i
 					|| (this.state.next_visible && this.state.currently_viewed + 1 == i)) {
 					let nested_child = null;
@@ -127,9 +131,70 @@ class CardStack extends Component {
 					return React.cloneElement(child, child_props, nested_child);
 				}
 			});
+
+			children.push(cards);
 		}
 
-		// TODO: add interact buttons to children
+		if (this.state.interact && this.state.interact.length > 0) {
+			let interact = this.state.interact.map((child, i) => {
+				if (!child.props.onClick) {
+					console.error('CardButton must be provided an onClick string or function.');
+					return null;
+				}
+
+				// pass currently_viewed data for functions
+				let nested_child = null;
+				
+				if (child.props && child.props.children)
+					nested_child = child.props.children;
+
+				let child_props = {
+					...child.props,
+					data: this.state.cards[this.state.currently_viewed].props.data,
+				};
+
+				switch (child.props.onClick) {
+					case 'top':
+						child_props.onClick = data => {
+							this.props.onTop(data, { x: 0, y: 0 });
+							this.incrementView();
+						};
+						break;
+					case 'right':
+						child_props.onClick = data => {
+							this.props.onTop(data, { x: 0, y: 0 });
+							this.incrementView();
+						};
+						break;
+					case 'bottom':
+						child_props.onClick = data => {
+							this.props.onTop(data, { x: 0, y: 0 });
+							this.incrementView();
+						};
+						break;
+					case 'left':
+						child_props.onClick = data => {
+							this.props.onTop(data, { x: 0, y: 0 });
+							this.incrementView();
+						};
+						break;
+					default:
+						if (typeof child_props.onClick !== 'function') {
+							console.error('onClick property for CardButton must be a function or one of strings: \'top\', \'right\', \'bottom\', or \'left\'.');
+							return null;
+						}
+
+						child_props.onClick = child.props.onClick;
+						break;
+				}
+
+				return React.cloneElement(child, child_props, nested_child);
+			});
+
+			children.push(interact);
+		}
+
+		if (children.length == 0) children = null;
 
 		let style = { ...this.props.style };
 
@@ -187,7 +252,6 @@ class CardStack extends Component {
 		});
 	}
 
-	// TODO: interact buttons
 	getSortedChildren(children) {
 		let flat_children = [];
 
@@ -204,6 +268,8 @@ class CardStack extends Component {
 		let interact = [];
 
 		cards = flat_children.filter(child => child.type == Card);
+
+		interact = flat_children.filter(child => child.type == CardButton);
 
 		return {
 			cards,

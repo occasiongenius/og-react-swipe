@@ -186,10 +186,12 @@ class Card extends Component {
 
 		// remove grabbed flag, so that grabbed Card is no longer shown
 		// remove nullify_click flag so that next Card could be clicked
-		this.setState({ 
-			grabbed: false,
-			nullify_click: false,
-		});
+		if (this.container) { // if this component was not removed
+			this.setState({ 
+				grabbed: false,
+				nullify_click: false,
+			});
+		}
 
 		document.removeEventListener('touchmove', this.moveTouch);
 		document.removeEventListener('touchend', this.dropTouch);
@@ -228,8 +230,10 @@ class Card extends Component {
 		// is this a click? if so, set nullify click so
 		// that click event is not fired on drop
 		if (this.props.click_bound && !this.state.nullify_click 
-			&& (left_move > this.props.click_bound || top_move > this.props.click_bound))
+			&& (left_move > this.props.click_bound || top_move > this.props.click_bound)) {
+
 			this.setState({ nullify_click: true });
+		}
 
 		this.animate(left_move, top_move);
 	}
@@ -258,7 +262,8 @@ class Card extends Component {
 			amount = abs(y);
 		}
 
-		if (this.props.onClick && !direction && !this.state.nullify_click)
+		if (this.props.onClick && !direction && !this.state.nullify_click &&
+			abs(x) <= this.props.click_bound && abs(y) <= this.props.click_bound)
 			direction = 'click';
 
 		// revert any outside animations to (0, 0) position

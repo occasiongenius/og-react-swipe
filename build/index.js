@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -321,7 +321,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(17);
+var _reactDom = __webpack_require__(18);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
@@ -545,10 +545,13 @@ var Card = function (_Component) {
 
 			// remove grabbed flag, so that grabbed Card is no longer shown
 			// remove nullify_click flag so that next Card could be clicked
-			this.setState({
-				grabbed: false,
-				nullify_click: false
-			});
+			if (this.container) {
+				// if this component was not removed
+				this.setState({
+					grabbed: false,
+					nullify_click: false
+				});
+			}
 
 			document.removeEventListener('touchmove', this.moveTouch);
 			document.removeEventListener('touchend', this.dropTouch);
@@ -583,7 +586,10 @@ var Card = function (_Component) {
 
 			// is this a click? if so, set nullify click so
 			// that click event is not fired on drop
-			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) this.setState({ nullify_click: true });
+			if (this.props.click_bound && !this.state.nullify_click && (left_move > this.props.click_bound || top_move > this.props.click_bound)) {
+
+				this.setState({ nullify_click: true });
+			}
 
 			this.animate(left_move, top_move);
 		}
@@ -615,7 +621,7 @@ var Card = function (_Component) {
 				amount = abs(y);
 			}
 
-			if (this.props.onClick && !direction && !this.state.nullify_click) direction = 'click';
+			if (this.props.onClick && !direction && !this.state.nullify_click && abs(x) <= this.props.click_bound && abs(y) <= this.props.click_bound) direction = 'click';
 
 			// revert any outside animations to (0, 0) position
 			if (this.props.animationHook) this.props.animationHook(0, 0);
@@ -1061,7 +1067,7 @@ module.exports = shallowEqual;
  * 
  */
 
-var isTextNode = __webpack_require__(19);
+var isTextNode = __webpack_require__(20);
 
 /*eslint-disable no-bitwise */
 
@@ -1335,7 +1341,73 @@ var throttle = exports.throttle = function throttle(func, wait, options) {
 "use strict";
 
 
-var _CardStack = __webpack_require__(16);
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CardButton = function (_Component) {
+	_inherits(CardButton, _Component);
+
+	function CardButton(props) {
+		_classCallCheck(this, CardButton);
+
+		var _this = _possibleConstructorReturn(this, (CardButton.__proto__ || Object.getPrototypeOf(CardButton)).call(this, props));
+
+		_this.click = _this.click.bind(_this);
+		return _this;
+	}
+
+	_createClass(CardButton, [{
+		key: 'shouldComponentUpdate',
+		value: function shouldComponentUpdate(nextProps, nextState) {
+			return nextProps.data !== this.props.data;
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'button',
+				{
+					onClick: this.click,
+					style: this.props.style || {},
+					className: this.props.className ? this.props.className + ' og-button' : 'og-button' },
+				this.props.children
+			);
+		}
+	}, {
+		key: 'click',
+		value: function click() {
+			if (this.props.onClick) this.props.onClick(this.props.data);
+		}
+	}]);
+
+	return CardButton;
+}(_react.Component);
+
+exports.default = CardButton;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _CardStack = __webpack_require__(17);
 
 var _CardStack2 = _interopRequireDefault(_CardStack);
 
@@ -1343,15 +1415,20 @@ var _Card = __webpack_require__(3);
 
 var _Card2 = _interopRequireDefault(_Card);
 
+var _CardButton = __webpack_require__(15);
+
+var _CardButton2 = _interopRequireDefault(_CardButton);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = {
 	Card: _Card2.default,
-	CardStack: _CardStack2.default
+	CardStack: _CardStack2.default,
+	CardButton: _CardButton2.default
 };
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1372,6 +1449,10 @@ var _react2 = _interopRequireDefault(_react);
 var _Card = __webpack_require__(3);
 
 var _Card2 = _interopRequireDefault(_Card);
+
+var _CardButton = __webpack_require__(15);
+
+var _CardButton2 = _interopRequireDefault(_CardButton);
 
 var _utility = __webpack_require__(14);
 
@@ -1419,6 +1500,7 @@ var CardStack = function (_Component) {
 		var children = _this.getSortedChildren(_this.props.children);
 
 		_this.state.cards = children.cards;
+		_this.state.interact = children.interact;
 
 		_this.refs = {};
 		return _this;
@@ -1447,8 +1529,10 @@ var CardStack = function (_Component) {
 			if (nextProps.children !== this.state.children) {
 				var children = this.getSortedChildren(nextProps.children);
 
-				// TODO: add interact buttons here
-				this.setState({ cards: children.cards });
+				this.setState({
+					cards: children.cards,
+					interact: children.interact
+				});
 			}
 		}
 	}, {
@@ -1481,10 +1565,10 @@ var CardStack = function (_Component) {
 
 			if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
 
-			var children = null;
+			var children = [];
 
 			if (this.state.cards && this.state.cards.length > 0) {
-				children = this.state.cards.map(function (child, i) {
+				var cards = this.state.cards.map(function (child, i) {
 					if (_this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i) {
 						var nested_child = null;
 
@@ -1497,9 +1581,68 @@ var CardStack = function (_Component) {
 						return _react2.default.cloneElement(child, child_props, nested_child);
 					}
 				});
+
+				children.push(cards);
 			}
 
-			// TODO: add interact buttons to children
+			if (this.state.interact && this.state.interact.length > 0) {
+				var interact = this.state.interact.map(function (child, i) {
+					if (!child.props.onClick) {
+						console.error('CardButton must be provided an onClick string or function.');
+						return null;
+					}
+
+					// pass currently_viewed data for functions
+					var nested_child = null;
+
+					if (child.props && child.props.children) nested_child = child.props.children;
+
+					var child_props = _extends({}, child.props, {
+						data: _this2.state.cards[_this2.state.currently_viewed].props.data
+					});
+
+					switch (child.props.onClick) {
+						case 'top':
+							child_props.onClick = function (data) {
+								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.incrementView();
+							};
+							break;
+						case 'right':
+							child_props.onClick = function (data) {
+								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.incrementView();
+							};
+							break;
+						case 'bottom':
+							child_props.onClick = function (data) {
+								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.incrementView();
+							};
+							break;
+						case 'left':
+							child_props.onClick = function (data) {
+								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.incrementView();
+							};
+							break;
+						default:
+							if (typeof child_props.onClick !== 'function') {
+								console.error('onClick property for CardButton must be a function or one of strings: \'top\', \'right\', \'bottom\', or \'left\'.');
+								return null;
+							}
+
+							child_props.onClick = child.props.onClick;
+							break;
+					}
+
+					return _react2.default.cloneElement(child, child_props, nested_child);
+				});
+
+				children.push(interact);
+			}
+
+			if (children.length == 0) children = null;
 
 			var style = _extends({}, this.props.style);
 
@@ -1567,9 +1710,6 @@ var CardStack = function (_Component) {
 				if (_this3.props.onRunOut && currently_viewed >= _this3.state.cards.length) _this3.props.onRunOut();
 			});
 		}
-
-		// TODO: interact buttons
-
 	}, {
 		key: 'getSortedChildren',
 		value: function getSortedChildren(children) {
@@ -1591,6 +1731,10 @@ var CardStack = function (_Component) {
 				return child.type == _Card2.default;
 			});
 
+			interact = flat_children.filter(function (child) {
+				return child.type == _CardButton2.default;
+			});
+
 			return {
 				cards: cards,
 				interact: interact
@@ -1604,7 +1748,7 @@ var CardStack = function (_Component) {
 exports.default = CardStack;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1642,15 +1786,15 @@ if (process.env.NODE_ENV === 'production') {
   // DCE check should happen before ReactDOM bundle executes so that
   // DevTools can report bad minification during injection.
   checkDCE();
-  module.exports = __webpack_require__(18);
+  module.exports = __webpack_require__(19);
 } else {
-  module.exports = __webpack_require__(21);
+  module.exports = __webpack_require__(22);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1886,7 +2030,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1901,7 +2045,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
  * @typechecks
  */
 
-var isNode = __webpack_require__(20);
+var isNode = __webpack_require__(21);
 
 /**
  * @param {*} object The object to check.
@@ -1914,7 +2058,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1942,7 +2086,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1975,9 +2119,9 @@ var shallowEqual = __webpack_require__(8);
 var containsNode = __webpack_require__(9);
 var focusNode = __webpack_require__(10);
 var emptyObject = __webpack_require__(11);
-var checkPropTypes = __webpack_require__(22);
-var hyphenateStyleName = __webpack_require__(24);
-var camelizeStyleName = __webpack_require__(26);
+var checkPropTypes = __webpack_require__(23);
+var hyphenateStyleName = __webpack_require__(25);
+var camelizeStyleName = __webpack_require__(27);
 
 /**
  * WARNING: DO NOT manually require this module.
@@ -17344,7 +17488,7 @@ module.exports = reactDom;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17360,7 +17504,7 @@ module.exports = reactDom;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(12);
   var warning = __webpack_require__(13);
-  var ReactPropTypesSecret = __webpack_require__(23);
+  var ReactPropTypesSecret = __webpack_require__(24);
   var loggedTypeFailures = {};
 }
 
@@ -17411,7 +17555,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17430,7 +17574,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17445,7 +17589,7 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var hyphenate = __webpack_require__(25);
+var hyphenate = __webpack_require__(26);
 
 var msPattern = /^ms-/;
 
@@ -17472,7 +17616,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17508,7 +17652,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17523,7 +17667,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(27);
+var camelize = __webpack_require__(28);
 
 var msPattern = /^-ms-/;
 
@@ -17551,7 +17695,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
