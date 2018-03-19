@@ -27,7 +27,7 @@ class CardStack extends Component {
 			onBottom: this.props.onBottom ? this.onBottom : undefined,
 			onLeft: this.props.onLeft ? this.onLeft : undefined,
 			onClick: this.props.onClick ? this.onClick : undefined,
-			currently_viewed: this.props.start_index || 0,
+			currently_viewed: this.props.viewIndex || 0,
 			next_overlay: this.props.nextOverlay ? this.props.nextOverlay : undefined,
 		};
 
@@ -65,6 +65,16 @@ class CardStack extends Component {
 
 			this.setState(new_state);
 		}
+	}
+
+	componentWillReceiveProps(nextProps) {
+		let new_state = {};
+
+		if (nextProps.viewIndex !== this.state.currently_viewed)
+			new_state.currently_viewed = nextProps.viewIndex;
+
+		if (Object.keys(new_state).length > 0)
+			this.setState(new_state);
 	}
 	
 	render() {

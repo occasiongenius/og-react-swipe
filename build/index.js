@@ -995,7 +995,7 @@ var CardStack = function (_Component) {
 			onBottom: _this.props.onBottom ? _this.onBottom : undefined,
 			onLeft: _this.props.onLeft ? _this.onLeft : undefined,
 			onClick: _this.props.onClick ? _this.onClick : undefined,
-			currently_viewed: _this.props.start_index || 0,
+			currently_viewed: _this.props.viewIndex || 0,
 			next_overlay: _this.props.nextOverlay ? _this.props.nextOverlay : undefined
 		};
 
@@ -1019,6 +1019,15 @@ var CardStack = function (_Component) {
 
 				this.setState(new_state);
 			}
+		}
+	}, {
+		key: 'componentWillReceiveProps',
+		value: function componentWillReceiveProps(nextProps) {
+			var new_state = {};
+
+			if (nextProps.viewIndex !== this.state.currently_viewed) new_state.currently_viewed = nextProps.viewIndex;
+
+			if (Object.keys(new_state).length > 0) this.setState(new_state);
 		}
 	}, {
 		key: 'render',
