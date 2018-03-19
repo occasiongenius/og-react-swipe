@@ -132,7 +132,7 @@ class CardStack extends Component {
 				}
 			});
 
-			children.push(cards);
+			children.concat(cards);
 		}
 
 		if (this.state.interact && this.state.interact.length > 0) {
@@ -191,7 +191,7 @@ class CardStack extends Component {
 				return React.cloneElement(child, child_props, nested_child);
 			});
 
-			children.push(interact);
+			children.concat(interact);
 		}
 
 		if (children.length == 0) children = null;
