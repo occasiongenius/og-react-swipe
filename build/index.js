@@ -1403,7 +1403,7 @@ var CardButton = function (_Component) {
 	}, {
 		key: 'click',
 		value: function click() {
-			if (this.props.onClick) this.props.onClick(this.props.data);
+			if (this.props.onClick && typeof this.props.onClick === 'function') this.props.onClick(this.props.data);
 		}
 	}]);
 
