@@ -1604,25 +1604,25 @@ var CardStack = function (_Component) {
 					switch (child.props.onClick) {
 						case 'top':
 							child_props.onClick = function (data) {
-								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.onTop(data, { x: 0, y: 0 });
 								_this2.incrementView();
 							};
 							break;
 						case 'right':
 							child_props.onClick = function (data) {
-								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.onRight(data, { x: 0, y: 0 });
 								_this2.incrementView();
 							};
 							break;
 						case 'bottom':
 							child_props.onClick = function (data) {
-								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.onBottom(data, { x: 0, y: 0 });
 								_this2.incrementView();
 							};
 							break;
 						case 'left':
 							child_props.onClick = function (data) {
-								_this2.props.onTop(data, { x: 0, y: 0 });
+								_this2.onLeft(data, { x: 0, y: 0 });
 								_this2.incrementView();
 							};
 							break;

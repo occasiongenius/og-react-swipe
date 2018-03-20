@@ -156,25 +156,25 @@ class CardStack extends Component {
 				switch (child.props.onClick) {
 					case 'top':
 						child_props.onClick = data => {
-							this.props.onTop(data, { x: 0, y: 0 });
+							this.onTop(data, { x: 0, y: 0 });
 							this.incrementView();
 						};
 						break;
 					case 'right':
 						child_props.onClick = data => {
-							this.props.onTop(data, { x: 0, y: 0 });
+							this.onRight(data, { x: 0, y: 0 });
 							this.incrementView();
 						};
 						break;
 					case 'bottom':
 						child_props.onClick = data => {
-							this.props.onTop(data, { x: 0, y: 0 });
+							this.onBottom(data, { x: 0, y: 0 });
 							this.incrementView();
 						};
 						break;
 					case 'left':
 						child_props.onClick = data => {
-							this.props.onTop(data, { x: 0, y: 0 });
+							this.onLeft(data, { x: 0, y: 0 });
 							this.incrementView();
 						};
 						break;
