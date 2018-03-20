@@ -1638,6 +1638,8 @@ var CardStack = function (_Component) {
 								_this2.incrementView();
 							};
 							break;
+						case 'none':
+							break;
 						default:
 							if (typeof child_props.onClick !== 'function') {
 								console.error('onClick property for CardButton must be a function or one of strings: \'top\', \'right\', \'bottom\', or \'left\'.');
