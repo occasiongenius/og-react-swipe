@@ -1379,13 +1379,25 @@ var CardButton = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var children = null;
+
+			if (typeof this.props.children === 'function') {
+				children = this.props.children(this.props.data);
+			} else {
+				children = this.props.children;
+			}
+			/*if (this.props.createChild && typeof this.props.createChild === 'function')
+   	children = this.props.createChild(this.props.data);
+   else
+   	children = this.props.children*/
+
 			return _react2.default.createElement(
 				'button',
 				{
 					onClick: this.click,
 					style: this.props.style || {},
 					className: this.props.className ? this.props.className + ' og-button' : 'og-button' },
-				this.props.children
+				children
 			);
 		}
 	}, {
