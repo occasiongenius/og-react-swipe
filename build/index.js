@@ -1639,7 +1639,11 @@ var CardStack = function (_Component) {
 					return _react2.default.cloneElement(child, child_props, nested_child);
 				});
 
-				children = children.concat(interact);
+				children.push(_react2.default.createElement(
+					'div',
+					{ className: 'og-buttons' },
+					interact
+				));
 			}
 
 			if (children.length == 0) children = null;

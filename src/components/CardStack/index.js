@@ -191,7 +191,11 @@ class CardStack extends Component {
 				return React.cloneElement(child, child_props, nested_child);
 			});
 
-			children = children.concat(interact);
+			children.push(
+				<div className="og-buttons">
+					{ interact }
+				</div>
+			);
 		}
 
 		if (children.length == 0) children = null;
