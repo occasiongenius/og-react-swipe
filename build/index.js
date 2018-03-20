@@ -1641,7 +1641,7 @@ var CardStack = function (_Component) {
 
 				children.push(_react2.default.createElement(
 					'div',
-					{ className: 'og-buttons' },
+					{ className: 'og-buttons', key: 'og-buttons' },
 					interact
 				));
 			}

@@ -192,7 +192,7 @@ class CardStack extends Component {
 			});
 
 			children.push(
-				<div className="og-buttons">
+				<div className="og-buttons" key="og-buttons">
 					{ interact }
 				</div>
 			);
