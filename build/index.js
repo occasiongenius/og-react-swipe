@@ -1526,7 +1526,7 @@ var CardStack = function (_Component) {
 	}, {
 		key: 'componentWillReceiveProps',
 		value: function componentWillReceiveProps(nextProps) {
-			if (nextProps.children !== this.state.children) {
+			if (nextProps.children !== this.props.children) {
 				var children = this.getSortedChildren(nextProps.children);
 
 				this.setState({
@@ -1582,7 +1582,7 @@ var CardStack = function (_Component) {
 					}
 				});
 
-				children.concat(cards);
+				children = children.concat(cards);
 			}
 
 			if (this.state.interact && this.state.interact.length > 0) {
@@ -1639,7 +1639,7 @@ var CardStack = function (_Component) {
 					return _react2.default.cloneElement(child, child_props, nested_child);
 				});
 
-				children.concat(interact);
+				children = children.concat(interact);
 			}
 
 			if (children.length == 0) children = null;

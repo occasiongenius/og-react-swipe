@@ -75,7 +75,7 @@ class CardStack extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.children !== this.state.children) {
+		if (nextProps.children !== this.props.children) {
 			let children = this.getSortedChildren(nextProps.children);
 
 			this.setState({ 
@@ -112,7 +112,7 @@ class CardStack extends Component {
 		if (this.state.styleOnMove) default_child_props.styleOnMove = this.state.styleOnMove;
 
 		let children = [];
-			
+
 		if (this.state.cards && this.state.cards.length > 0) {
 			let cards = this.state.cards.map((child, i) => {
 				if (this.state.currently_viewed == i
@@ -132,7 +132,7 @@ class CardStack extends Component {
 				}
 			});
 
-			children.concat(cards);
+			children = children.concat(cards);
 		}
 
 		if (this.state.interact && this.state.interact.length > 0) {
@@ -191,7 +191,7 @@ class CardStack extends Component {
 				return React.cloneElement(child, child_props, nested_child);
 			});
 
-			children.concat(interact);
+			children = children.concat(interact);
 		}
 
 		if (children.length == 0) children = null;
@@ -266,6 +266,7 @@ class CardStack extends Component {
 
 		let cards = [];
 		let interact = [];
+
 
 		cards = flat_children.filter(child => child.type == Card);
 
