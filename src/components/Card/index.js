@@ -128,10 +128,10 @@ class Card extends Component {
 	}
 
 	grabTouch(e) {
-		e.preventDefault();
-
 		// do not grab if the target is a link or button
 		if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+			e.preventDefault();
+
 			let coords = {
 				x: e.touches[0].clientX,
 				y: e.touches[0].clientY,

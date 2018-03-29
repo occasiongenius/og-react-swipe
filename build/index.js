@@ -487,10 +487,10 @@ var Card = function (_Component) {
 		value: function grabTouch(e) {
 			var _this4 = this;
 
-			e.preventDefault();
-
 			// do not grab if the target is a link or button
 			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+				e.preventDefault();
+
 				var coords = {
 					x: e.touches[0].clientX,
 					y: e.touches[0].clientY
