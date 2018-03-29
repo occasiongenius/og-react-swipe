@@ -489,27 +489,30 @@ var Card = function (_Component) {
 
 			e.preventDefault();
 
-			var coords = {
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY
-			};
+			// do not grab if the target is a link or button
+			if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+				var coords = {
+					x: e.touches[0].clientX,
+					y: e.touches[0].clientY
+				};
 
-			// get difference between mouse x/y and top/left of Card
-			var left_diff = coords.x - this.state.start_left;
-			var top_diff = coords.y - this.state.start_top;
+				// get difference between mouse x/y and top/left of Card
+				var left_diff = coords.x - this.state.start_left;
+				var top_diff = coords.y - this.state.start_top;
 
-			// store the difference, and set grabbed flag to show grabbed element
-			this.setState({
-				grabbed: true,
-				left_diff: left_diff,
-				top_diff: top_diff
-			}, function () {
-				_this4.props.showNext();
-				_this4.setGrabbedPos(coords.x, coords.y);
-			});
+				// store the difference, and set grabbed flag to show grabbed element
+				this.setState({
+					grabbed: true,
+					left_diff: left_diff,
+					top_diff: top_diff
+				}, function () {
+					_this4.props.showNext();
+					_this4.setGrabbedPos(coords.x, coords.y);
+				});
 
-			document.addEventListener('touchmove', this.moveTouch);
-			document.addEventListener('touchend', this.dropTouch);
+				document.addEventListener('touchmove', this.moveTouch);
+				document.addEventListener('touchend', this.dropTouch);
+			}
 		}
 	}, {
 		key: 'drop',

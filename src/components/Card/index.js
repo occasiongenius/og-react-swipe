@@ -130,27 +130,30 @@ class Card extends Component {
 	grabTouch(e) {
 		e.preventDefault();
 
-		let coords = {
-			x: e.touches[0].clientX,
-			y: e.touches[0].clientY,
-		};
+		// do not grab if the target is a link or button
+		if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+			let coords = {
+				x: e.touches[0].clientX,
+				y: e.touches[0].clientY,
+			};
 
-		// get difference between mouse x/y and top/left of Card
-		let left_diff = coords.x - this.state.start_left;
-		let top_diff = coords.y - this.state.start_top;
+			// get difference between mouse x/y and top/left of Card
+			let left_diff = coords.x - this.state.start_left;
+			let top_diff = coords.y - this.state.start_top;
 
-		// store the difference, and set grabbed flag to show grabbed element
-		this.setState({
-			grabbed: true,
-			left_diff,
-			top_diff,
-		}, () => {
-			this.props.showNext();
-			this.setGrabbedPos(coords.x, coords.y);
-		});
+			// store the difference, and set grabbed flag to show grabbed element
+			this.setState({
+				grabbed: true,
+				left_diff,
+				top_diff,
+			}, () => {
+				this.props.showNext();
+				this.setGrabbedPos(coords.x, coords.y);
+			});
 
-		document.addEventListener('touchmove', this.moveTouch);
-		document.addEventListener('touchend', this.dropTouch);
+			document.addEventListener('touchmove', this.moveTouch);
+			document.addEventListener('touchend', this.dropTouch);
+		}
 	}
 
 	drop(e) {
