@@ -115,7 +115,7 @@ class CardStack extends Component {
 
 		if (this.state.cards && this.state.cards.length > 0) {
 			let cards = this.state.cards.map((child, i) => {
-				if (this.state.currently_viewed == i
+				if (child && this.state.currently_viewed == i
 					|| (this.state.next_visible && this.state.currently_viewed + 1 == i)) {
 					let nested_child = null;
 

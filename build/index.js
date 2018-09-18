@@ -1584,7 +1584,7 @@ var CardStack = function (_Component) {
 
 			if (this.state.cards && this.state.cards.length > 0) {
 				var cards = this.state.cards.map(function (child, i) {
-					if (_this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i) {
+					if (child && _this2.state.currently_viewed == i || _this2.state.next_visible && _this2.state.currently_viewed + 1 == i) {
 						var nested_child = null;
 
 						if (child.props && child.props.children) nested_child = child.props.children;
